@@ -1,0 +1,26 @@
+'use strict';
+
+async function injectScripts(){
+    const CONSTS = await import('./web/consts.mjs');
+    let stor_sync = (await new Promise(r => storage.sync.get(CONSTS.DEFAULT_STORAGE.SYNC, r)));
+    let show_video_playback = stor_sync.settings.twitch.chat.show_video_playback;
+    if(show_video_playback){
+        injectModuleScript(browser.extension.getURL(WEB_DIR + '/video_playback.js'));
+    }
+    let custom_timestamps = stor_sync.settings.twitch.chat.custom_timestamps;
+    if(custom_timestamps){
+        const CLASS_CHAT_LINE_TIMESTAMP = CONSTS.EXTENSION_CLASS_PREFIX + '-chat-line-timestamp';
+        const CLASS_CHAT_LINE_TIMESTAMP_SCRIPT = CLASS_CHAT_LINE_TIMESTAMP + '-script';
+        let script = document.createElement('script');
+        script.setAttribute('type', 'module');
+        script.id = CLASS_CHAT_LINE_TIMESTAMP_SCRIPT;
+        script.setAttribute('settings', JSON.stringify(stor_sync.settings.twitch.chat.custom_timestamps_settings));
+        script.setAttribute('src', browser.extension.getURL(WEB_DIR + '/timestamps.js'));
+        document.head.appendChild(script);
+    }
+    if(CONSTS.DEV_MODE){
+        injectModuleScript(browser.extension.getURL(WEB_DIR + '/dev.js'));
+    }
+}
+
+injectScripts();

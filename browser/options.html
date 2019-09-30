@@ -1,0 +1,102 @@
+<html>
+    <head>
+        <title></title>
+        <meta content="">
+        <style>
+            .settings_table, .settings_table_tr > td, .settings_table_tr > th {
+                border:1px solid;
+                border-collapse:collapse;
+                padding:7px;
+            }
+            .settings_div_title > input[type="text"] {
+                width:260px;
+            }
+            .settings_div_timestamps > input[type="text"] {
+                width:150px;
+            }
+            .settings_div_popout > input[type="number"] {
+                width:70px;
+            }
+            .general-button {
+                width:100px;
+                height:30px;
+            }
+            .small-reset-button {
+            }
+        </style>
+        <script type="text/javascript" src="js/twitch/options.js"></script>
+    </head>
+    <body>
+        <div>
+            <h1 id="title">Name Version</h1>
+            <table class="settings_table">
+                <tr class="settings_table_tr">
+                    <th>Popouter</th>
+                    <th>Title Changer</th>
+                    <th>Custom Timestamps</th>
+                    <th>Video Playback Notify</th>
+                </tr>
+                <tr class="settings_table_tr">
+                    <td>
+                        <div class="settings_div settings_div_popout">
+                            <span>Player popout opens <br/>window with source <br/>video resolution size.<br/></span><br/>
+                            <span>Default player size: </span><br/>
+                            <button path="local.settings.twitch.popout_player.default_resolution.width" class="small-reset-button" type="button">R</button><!--
+                            --><input path="local.settings.twitch.popout_player.default_resolution.width" class="setting" type="number">Width</input><br/>
+                            <button path="local.settings.twitch.popout_player.default_resolution.height" class="small-reset-button" type="button">R</button><!--
+                            --><input path="local.settings.twitch.popout_player.default_resolution.height" class="setting" type="number">Height</input><br/>
+                            <label title="Always use default player size">
+                                <input path="local.settings.twitch.popout_player.fixed_size" class="setting" type="checkbox">Fixed player size</input>
+                            </label><br/>
+                            <br/>
+                            <span>Popout chat size: </span><br/>
+                            <button path="local.settings.twitch.popout_chat.window_size.width" class="small-reset-button" type="button">R</button><!--
+                            --><input path="local.settings.twitch.popout_chat.window_size.width" class="setting" type="number">Width</input><br/>
+                            <button path="local.settings.twitch.popout_chat.window_size.height" class="small-reset-button" type="button">R</button><!--
+                            --><input path="local.settings.twitch.popout_chat.window_size.height" class="setting" type="number">Height</input><br/>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="settings_div settings_div_title">
+                            <label>
+                                <input path="sync.settings.twitch.popout_chat.add_channel_link" class="setting" type="checkbox">Add channel link to popout chat head</input>
+                            </label><br/>
+                            <label><input path="sync.settings.twitch.popout_chat.change_title" class="setting" type="checkbox">Enable for chat popout</input></label><br/>
+                            <span>Popout Chat Title Template</span><br/>
+                            <input path="sync.settings.twitch.popout_chat.title" class="setting" type="text"></input><!--
+                            --><button path="sync.settings.twitch.popout_chat.title" class="small-reset-button" type="button">R</button><br/>
+                            <label><input path="sync.settings.twitch.popout_player.change_title" class="setting" type="checkbox">Enable for player popout</input></label><br/>
+                            <span>Popout Stream Title Template</span><br/>
+                            <input path="sync.settings.twitch.popout_player.title_channel" class="setting" type="text"></input><!--
+                            --><button path="sync.settings.twitch.popout_player.title_channel" class="small-reset-button" type="button">R</button><br/>
+                            <span>Popout Video Title Template</span><br/>
+                            <input path="sync.settings.twitch.popout_player.title_video" class="setting" type="text"></input><!--
+                            --><button path="sync.settings.twitch.popout_player.title_video" class="small-reset-button" type="button">R</button><br/>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="settings_div settings_div_timestamps">
+                            <label><input path="sync.settings.twitch.chat.custom_timestamps" class="setting" type="checkbox">Enable module</input></label><br/>
+                            <span>Chat timestamp format:</span><br/>
+                            <input path="sync.settings.twitch.chat.custom_timestamps_settings.timestamp_format" class="setting" type="text"></input><!--
+                            --><button path="sync.settings.twitch.chat.custom_timestamps_settings.timestamp_format" class="small-reset-button" type="button">R</button><br/>
+                            <span>(<a href="http://man7.org/linux/man-pages/man1/date.1.html#DESCRIPTION" target="_blank">GNU date like</a>)</span><br/>
+                            <label title="Force enable ignoring chat setting">
+                                <input path="sync.settings.twitch.chat.custom_timestamps_settings.force_enable" class="setting" type="checkbox">Force enable</input>
+                            </label><br/>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="settings_div settings_div_video_playback">
+                            <span>Shows in chat "Stream up",<br/> "Stream down" notify</span><br/>
+                            <label><input path="sync.settings.twitch.chat.show_video_playback" class="setting" type="checkbox">Enable module</input></label><br/>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+            <br/>
+            <button title="Save settings" class="general-button" id="save-button" type="submit">Save</button>
+            <button title="Reset all values (without save)" class="general-button" id="reset-button" type="reset">Reset</button>
+        </div>
+    </body>
+</html>
