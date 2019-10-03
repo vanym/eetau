@@ -41,7 +41,9 @@ export const DEFAULT_STORAGE = {
             twitch: {
                 popout_player: {
                     default_resolution: {width: 1280, height: 720},
-                    fixed_size: false
+                    fixed_size: false,
+                    apply_volume: false,
+                    volume: 1
                 },
                 popout_chat: {
                     window_size: {width: 400, height: 720}

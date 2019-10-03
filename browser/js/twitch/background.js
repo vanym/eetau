@@ -133,7 +133,9 @@ async function openPlayer(target_info){
     const CONSTS = await import('./content/web/consts.mjs');
     let stor = (await new Promise(r => storage.local.get(CONSTS.DEFAULT_STORAGE.LOCAL, r)));
     let url = new URL('https://player.twitch.tv/');
-    url.searchParams.append('volume', '1');
+    if(stor.settings.twitch.popout_player.apply_volume){
+        url.searchParams.append('volume', String(stor.settings.twitch.popout_player.volume));
+    }
     let resolution;
     if(target_info.clip){
         url.hostname = 'clips.twitch.tv';
