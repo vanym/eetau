@@ -3,12 +3,17 @@
 const browser = chrome;
 const storage = chrome.storage;
 
-async function setup(){
+async function getDefStor(){
     const CONSTS = await import('./content/web/consts.mjs');
     const def_stor = {
         sync: CONSTS.DEFAULT_STORAGE.SYNC,
         local: CONSTS.DEFAULT_STORAGE.LOCAL
     }
+    return def_stor;
+}
+
+async function setup(){
+    const def_stor = await getDefStor();
     let stor = {};
     stor['sync'] = (await new Promise(r => storage.sync.get(def_stor['sync'], r)));
     stor['local'] = (await new Promise(r => storage.local.get(def_stor['local'], r)));
@@ -67,8 +72,7 @@ async function setup(){
         await storage_set();
     }
     async function reset(){
-        stor['sync'] = CONSTS.DEFAULT_STORAGE.SYNC;
-        stor['local'] = CONSTS.DEFAULT_STORAGE.LOCAL;
+        stor = await getDefStor();
         values();
     }
     async function small_reset(event){

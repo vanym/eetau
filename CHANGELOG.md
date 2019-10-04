@@ -4,6 +4,8 @@
 ### Added
  - Clips popout support
  - Apply volume setting
+### Fix
+ - Options page now reset properly
 
 ## 1.0.1 - 2019-09-29
 ### Changed
