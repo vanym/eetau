@@ -35,7 +35,7 @@ async function getTargetInfo(url, need_playable = true){
             if(response_json){
                 target_info.channel_name = response_json.channel.name;
                 target_info.channel_id = parseInt(response_json.channel._id);
-                target_info.video.id = parseInt(response_json._id);
+                target_info.video.id = response_json._id;
                 target_info.video.resolution = getVideoMaxResolution(Object.values(response_json.resolutions));
             }
         }
