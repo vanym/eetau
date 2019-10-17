@@ -23,6 +23,9 @@
             }
             .small-reset-button {
             }
+            button.setting[type="keybind"]{
+                font-family: "Courier New", Courier
+            }
         </style>
         <script type="text/javascript" src="js/twitch/options.js"></script>
     </head>
@@ -35,6 +38,7 @@
                     <th>Title Changer</th>
                     <th>Custom Timestamps</th>
                     <th>Video Playback Notify</th>
+                    <th>Player Controls</th>
                 </tr>
                 <tr class="settings_table_tr">
                     <td>
@@ -95,6 +99,156 @@
                         <div class="settings_div settings_div_video_playback">
                             <span>Shows in chat "Stream up",<br/> "Stream down" notify</span><br/>
                             <label><input path="sync.settings.twitch.chat.show_video_playback" class="setting" type="checkbox">Enable module</input></label><br/>
+                        </div>
+                    </td>
+                    <td>
+                        <div>
+                            <label><input path="sync.settings.twitch.player.controls" class="setting" type="checkbox">Enable module</input></label><br/>
+                            <table>
+                                <tr>
+                                    <td>
+                                        <span>Fullscreen toggle: </span>
+                                    </td>
+                                    <td>
+                                        <button path="sync.settings.twitch.player.controls_settings.keys.fullscreen_toggle" class="setting" type="keybind">&lt;none&gt;</button>
+                                    </td>
+                                    <td>
+                                        <button path="sync.settings.twitch.player.controls_settings.keys.fullscreen_toggle" class="small-reset-button" type="button">R</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <span>Mute toggle: </span>
+                                    </td>
+                                    <td>
+                                        <button path="sync.settings.twitch.player.controls_settings.keys.mute_toggle" class="setting" type="keybind">&lt;none&gt;</button>
+                                    </td>
+                                    <td>
+                                        <button path="sync.settings.twitch.player.controls_settings.keys.mute_toggle" class="small-reset-button" type="button">R</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <span>Pause toggle: </span>
+                                    </td>
+                                    <td>
+                                        <button path="sync.settings.twitch.player.controls_settings.keys.pause_toggle" class="setting" type="keybind">&lt;none&gt;</button>
+                                    </td>
+                                    <td>
+                                        <button path="sync.settings.twitch.player.controls_settings.keys.pause_toggle" class="small-reset-button" type="button">R</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <span>Theatre toggle: </span>
+                                    </td>
+                                    <td>
+                                        <button path="sync.settings.twitch.player.controls_settings.keys.theatre_toggle" class="setting" type="keybind">&lt;none&gt;</button>
+                                    </td>
+                                    <td>
+                                        <button path="sync.settings.twitch.player.controls_settings.keys.theatre_toggle" class="small-reset-button" type="button">R</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <span>Show video stats: </span>
+                                    </td>
+                                    <td>
+                                        <button path="sync.settings.twitch.player.controls_settings.keys.video_stats" class="setting" type="keybind">&lt;none&gt;</button>
+                                    </td>
+                                    <td>
+                                        <button path="sync.settings.twitch.player.controls_settings.keys.video_stats" class="small-reset-button" type="button">R</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <span>Show ad stats: </span>
+                                    </td>
+                                    <td>
+                                        <button path="sync.settings.twitch.player.controls_settings.keys.ad_stats" class="setting" type="keybind">&lt;none&gt;</button>
+                                    </td>
+                                    <td>
+                                        <button path="sync.settings.twitch.player.controls_settings.keys.ad_stats" class="small-reset-button" type="button">R</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <span>Latency mode toggle: </span>
+                                    </td>
+                                    <td>
+                                        <button path="sync.settings.twitch.player.controls_settings.keys.latency_mode" class="setting" type="keybind">&lt;none&gt;</button>
+                                    </td>
+                                    <td>
+                                        <button path="sync.settings.twitch.player.controls_settings.keys.latency_mode" class="small-reset-button" type="button">R</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <span>Speed up: </span>
+                                    </td>
+                                    <td>
+                                        <button path="sync.settings.twitch.player.controls_settings.keys.speed_up" class="setting" type="keybind">&lt;none&gt;</button>
+                                    </td>
+                                    <td>
+                                        <button path="sync.settings.twitch.player.controls_settings.keys.speed_up" class="small-reset-button" type="button">R</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <span>Speed down: </span>
+                                    </td>
+                                    <td>
+                                        <button path="sync.settings.twitch.player.controls_settings.keys.speed_down" class="setting" type="keybind">&lt;none&gt;</button>
+                                    </td>
+                                    <td>
+                                        <button path="sync.settings.twitch.player.controls_settings.keys.speed_down" class="small-reset-button" type="button">R</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <span title="Quality up (Max is Auto)">Quality up: </span>
+                                    </td>
+                                    <td>
+                                        <button path="sync.settings.twitch.player.controls_settings.keys.quality_up" class="setting" type="keybind">&lt;none&gt;</button>
+                                    </td>
+                                    <td>
+                                        <button path="sync.settings.twitch.player.controls_settings.keys.quality_up" class="small-reset-button" type="button">R</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <span>Quality down: </span>
+                                    </td>
+                                    <td>
+                                        <button path="sync.settings.twitch.player.controls_settings.keys.quality_down" class="setting" type="keybind">&lt;none&gt;</button>
+                                    </td>
+                                    <td>
+                                        <button path="sync.settings.twitch.player.controls_settings.keys.quality_down" class="small-reset-button" type="button">R</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <span>Left side toggle: </span>
+                                    </td>
+                                    <td>
+                                        <button path="sync.settings.twitch.player.controls_settings.keys.left_side_toggle" class="setting" type="keybind">&lt;none&gt;</button>
+                                    </td>
+                                    <td>
+                                        <button path="sync.settings.twitch.player.controls_settings.keys.left_side_toggle" class="small-reset-button" type="button">R</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <span>Right side toggle: </span>
+                                    </td>
+                                    <td>
+                                        <button path="sync.settings.twitch.player.controls_settings.keys.right_side_toggle" class="setting" type="keybind">&lt;none&gt;</button>
+                                    </td>
+                                    <td>
+                                        <button path="sync.settings.twitch.player.controls_settings.keys.right_side_toggle" class="small-reset-button" type="button">R</button>
+                                    </td>
+                                </tr>
+                            </table>
                         </div>
                     </td>
                 </tr>

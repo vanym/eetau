@@ -4,6 +4,7 @@
 ### Added
  - Clips popout support
  - Apply volume setting
+ - Player controls feature
 ### Fix
  - Options page now reset properly
 

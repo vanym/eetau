@@ -3,6 +3,10 @@
 const browser = chrome;
 const storage = chrome.storage;
 
+const KEYBIND_NONE = '<none>';
+const KEYBIND_PRESS = '<press>';
+const KEYBIND_PRESS_WAITING_ATTR = 'pass_waiting';
+
 async function getDefStor(){
     const CONSTS = await import('./content/web/consts.mjs');
     const def_stor = {
@@ -30,7 +34,7 @@ async function setup(){
     }
     let settings = document.getElementsByClassName('setting');
     function value_ele(stor, ele, path, set){
-        switch(ele.type){
+        switch(ele.getAttribute('type')){
             case "checkbox":
                 if(set){
                     v(stor, path, ele.checked);
@@ -52,6 +56,13 @@ async function setup(){
                     ele.value = v(stor, path);
                 }
             break;
+            case "keybind":
+                if(set){
+                    v(stor, path, ele.key);
+                }else{
+                    ele.key = v(stor, path);
+                }
+            break;
         }
     }
     function values(set){
@@ -62,7 +73,6 @@ async function setup(){
             }
         }
     }
-    values();
     async function storage_set(){
         (await new Promise(r => storage.sync.set(stor['sync'], r)));
         (await new Promise(r => storage.local.set(stor['local'], r)));
@@ -78,7 +88,7 @@ async function setup(){
     async function small_reset(event){
         let button_ele = event.target;
         let path = button_ele.getAttribute('path');
-        let input_ele = document.querySelector('input[path="' + path + '"]');
+        let input_ele = document.querySelector('*.setting[path="' + path + '"]');
         v(stor, path, v(def_stor, path));
         value_ele(stor, input_ele, path);
     }
@@ -91,6 +101,66 @@ async function setup(){
         small_reset_button.title = 'Reset';
         small_reset_button.addEventListener('click', small_reset);
     }
+    function keybind_button_click(event){
+        let ele = event.target;
+        if(ele.hasAttribute(KEYBIND_PRESS_WAITING_ATTR)){
+            ele.removeAttribute(KEYBIND_PRESS_WAITING_ATTR);
+            ele.key = ele.key;
+        }else{
+            ele.setAttribute(KEYBIND_PRESS_WAITING_ATTR, true);
+            ele.textContent = KEYBIND_PRESS;
+        }
+    }
+    function keybind_button_focusout(event){
+        let ele = event.target;
+        if(ele.hasAttribute(KEYBIND_PRESS_WAITING_ATTR)){
+            ele.removeAttribute(KEYBIND_PRESS_WAITING_ATTR);
+            ele.key = ele.key;
+        }
+    }
+    function keybind_button_keydown(event){
+        let ele = event.target;
+        if(ele.hasAttribute(KEYBIND_PRESS_WAITING_ATTR)){
+            ele.removeAttribute(KEYBIND_PRESS_WAITING_ATTR);
+            switch(event.code){
+                case 'Delete':
+                case 'Backspace':
+                case 'Escape':
+                    ele.key = null;
+                break;
+                default:
+                    ele.key = event.code;
+                break;
+            }
+            event.preventDefault();
+        }
+    }
+    function setup_keybind_button(ele){
+        Object.defineProperty(ele, 'key', {
+            set: function(key){
+                if(key){
+                    this.value = key;
+                }else{
+                    this.removeAttribute('value');
+                }
+                if(!this.hasAttribute(KEYBIND_PRESS_WAITING_ATTR)){
+                    this.textContent = key ? key : KEYBIND_NONE;
+                }
+            },
+            get: function(){
+                if(this.value){
+                    return this.value;
+                }else{
+                    return null;
+                }
+            }
+        });
+        ele.addEventListener('click', keybind_button_click);
+        ele.addEventListener('keydown', keybind_button_keydown);
+        ele.addEventListener('focusout', keybind_button_focusout)
+    }
+    let keybind_buttons = document.querySelectorAll('button.setting[type="keybind"]')
+    keybind_buttons.forEach(setup_keybind_button);
     let h1_title = document.getElementById('title');
     if(h1_title){
         let details = browser.app.getDetails();
@@ -98,6 +168,7 @@ async function setup(){
         document.title = title;
         h1_title.textContent = title;
     }
+    values();
 }
 
 setup();

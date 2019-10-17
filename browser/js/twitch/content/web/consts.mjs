@@ -11,6 +11,23 @@ export const DEFAULT_SETTINGS = {
     CUSTOM_TIMESTAMPS_SETTINGS: {
         timestamp_format: '%H:%M',
         force_enable: false
+    },
+    PLAYER_CONTROLS_SETTINGS: {
+        keys: {
+            fullscreen_toggle: 'KeyF',
+            mute_toggle: 'KeyM',
+            pause_toggle: 'KeyK',
+            theatre_toggle: 'KeyT',
+            video_stats: 'KeyI',
+            ad_stats: null,
+            latency_mode: 'KeyL',
+            left_side_toggle: 'BracketLeft',
+            right_side_toggle: 'BracketRight',
+            speed_up: 'Period',
+            speed_down: 'Comma',
+            quality_up: 'Equal',
+            quality_down: 'Minus'
+        }
     }
 }
 
@@ -22,6 +39,10 @@ export const DEFAULT_STORAGE = {
                     show_video_playback: true,
                     custom_timestamps: true,
                     custom_timestamps_settings: DEFAULT_SETTINGS.CUSTOM_TIMESTAMPS_SETTINGS
+                },
+                player: {
+                    controls: true,
+                    controls_settings: DEFAULT_SETTINGS.PLAYER_CONTROLS_SETTINGS
                 },
                 popout_chat: {
                     change_title: true,

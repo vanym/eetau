@@ -9,6 +9,7 @@ const ROOM_SELECTOR = '.room-selector';
 const VOD_CHAT_CONTAINER = '.qa-vod-chat';
 const CHAT_LIST = '.chat-list';
 const PLAYER = '.player';
+const PLAYER_ROOT = '.player-root';
 const CLIPS_BROADCASTER_INFO = '.clips-broadcaster-info';
 const TWITCH_LOG_SELECTOR = 'div[role="log"]';
 
@@ -242,8 +243,8 @@ export function getCurrentPlayer(ele=document){
     let player;
     try{
         const node = searchReactParents(
-            getReactInstance(ele.querySelector(PLAYER)),
-            n => n.stateNode && n.stateNode.player
+            getReactInstance(matchesQuery(ele, PLAYER_ROOT, true)),
+            n => n.stateNode && n.stateNode.props && n.stateNode.props.player
         );
         player = node.stateNode;
     }catch(_){}
@@ -306,4 +307,8 @@ export function observeGetChatRoomComponent(callback, roomSelector){
 
 export function observeSearchChatLog(callback, ele=document){
     observeSearch(callback, null, TWITCH_LOG_SELECTOR, ele, true);
+}
+
+export function observeSearchPlayerRoot(callback, ele=document){
+    observeSearch(callback, null, PLAYER_ROOT, ele, false, null);
 }
