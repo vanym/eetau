@@ -73,22 +73,58 @@ function searchReactChildren(node, predicate, maxDepth = 15, depth = 0){
     return null;
 }
 
+function deepPredicate(predicate, maxDepth = 4){
+    function check(e, path = [], set = new Set()){
+        if(path.length >= maxDepth){
+            return;
+        }
+        if(set.has(e)){
+            return;
+        }
+        try{
+            if(predicate(e)){
+                console.log(path);
+                return e;
+            }
+        }catch(e){}
+        set.add(e);
+        try{
+            for(let k in e){
+                path.push(k);
+                let r = check(e[k], path, set);
+                path.pop();
+                if(r){
+                    return r;
+                }
+            }
+        }catch(e){}
+    }
+    return check;
+}
+
 function ultimateSearchReact(ele, predicate){
     let react = getReactInstance(ele);
+    function found(n){
+        console.log(ele);
+        let outerHTML = ele.outerHTML;
+        let outerStart = outerHTML.search(/</);
+        let outerEnd   = outerHTML.search(/>/);
+        let str = outerHTML.substr(outerStart, outerEnd + 1);
+        console.log(str);
+        console.log(n);
+        console.log('----------------');
+        a.push(n);
+    }
     let p = searchReactParents(react, predicate, 0x10000);
     let a = [];
     if(p){
-        console.log(ele);
         console.log('parents');
-        console.log(p);
-        a.push(p);
+        found(p);
     }
     let c = searchReactChildren(react, predicate, 0x10000);
     if(c){
-        console.log(ele);
         console.log('children');
-        console.log(c);
-        a.push(c);
+        found(c);
     }
     for(let child of ele.children){
         let n = ultimateSearchReact(child, predicate);
@@ -100,4 +136,5 @@ function ultimateSearchReact(ele, predicate){
 window.getReactInstance    = getReactInstance;
 window.searchReactParents  = searchReactParents;
 window.searchReactChildren = searchReactChildren;
+window.deepPredicate       = deepPredicate;
 window.ultimateSearchReact = ultimateSearchReact;
