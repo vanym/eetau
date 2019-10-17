@@ -53,9 +53,25 @@ function searchReactChildren(node, predicate, maxDepth = 15, depth = 0){
     return null;
 }
 
-export function matchesQuery(ele, selector){
+function matchesParents(ele, selector){
+    let parent = ele.parentElement;
+    while(parent){
+        if(parent.matches && parent.matches(selector)){
+            return parent;
+        }
+        parent = parent.parentElement;
+    }
+}
+
+export function matchesQuery(ele, selector, checkParents = false){
     if(ele.matches && ele.matches(selector)){
         return ele;
+    }
+    if(checkParents){
+        let parentMatch = matchesParents(ele, selector);
+        if(parentMatch){
+            return parentMatch;
+        }
     }
     return ele.querySelector(selector);
 }
@@ -130,11 +146,23 @@ function observeSearch(callbackFound, callbackLost, selector, ele=document, one=
 }
 
 function observeGet(callback, ele, selector){
-    let observer = new window.MutationObserver(mutations => mutations.forEach(mutation => {
+    let observer;
+    function found(node){
+        callback(node);
+        observer.disconnect();
+        found = function(){};
+    }
+    observer = new window.MutationObserver(mutations => mutations.forEach(mutation => {
         if(mutation.type == 'childList'){
             for(let node of mutation.addedNodes){
-                if(node.matches(selector)){
-                    callback(node);
+                if(node.matches && node.matches(selector)){
+                    found(node);
+                }
+                if(node.querySelector){
+                    let f = node.querySelector(selector);
+                    if(f){
+                        found(f);
+                    }
                 }
             }
         }
@@ -142,7 +170,7 @@ function observeGet(callback, ele, selector){
     observer.observe(ele, {childList: true, subtree: false});
     let nodes = ele.querySelectorAll(selector);
     for(let node of nodes){
-        callback(node);
+        found(node);
     }
 }
 
