@@ -29,6 +29,10 @@ async function injectScripts(){
         script.setAttribute('src', browser.extension.getURL(WEB_DIR + '/player_controls.js'));
         document.head.appendChild(script);
     }
+    let auto_claim_points = stor_sync.settings.twitch.chat.community_points_settings.auto_claim_bonus;
+    if(auto_claim_points){
+        injectModuleScript(browser.extension.getURL(WEB_DIR + '/community_points_auto_claim.js'));
+    }
     if(CONSTS.DEV_MODE){
         injectModuleScript(browser.extension.getURL(WEB_DIR + '/dev.js'));
     }

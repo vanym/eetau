@@ -5,6 +5,7 @@
  - Clips popout support
  - Apply volume setting
  - Player controls feature
+ - Community points auto claim bonus feature
 ### Fix
  - Options page now reset properly
 

@@ -38,7 +38,10 @@ export const DEFAULT_STORAGE = {
                 chat: {
                     show_video_playback: true,
                     custom_timestamps: true,
-                    custom_timestamps_settings: DEFAULT_SETTINGS.CUSTOM_TIMESTAMPS_SETTINGS
+                    custom_timestamps_settings: DEFAULT_SETTINGS.CUSTOM_TIMESTAMPS_SETTINGS,
+                    community_points_settings: {
+                        auto_claim_bonus: false
+                    }
                 },
                 player: {
                     controls: true,

@@ -13,6 +13,8 @@ const PLAYER_ROOT = '.player-root';
 const MEDIA_PLAYER_ROOT = '.highwind-video-player';
 const CLIPS_BROADCASTER_INFO = '.clips-broadcaster-info';
 const TWITCH_LOG_SELECTOR = 'div[role="log"]';
+const COMMUNITY_POINTS_SUMMARY = '.community-points-summary';
+const COMMUNITY_POINTS_SUMMARY_CLAIM_BUTTON = '.claimable-bonus__icon';
 
 function getReactInstance(element){
     for(const key in element){
@@ -313,4 +315,12 @@ export function observeSearchChatLog(callback, ele=document){
 
 export function observeSearchPlayerRoot(callback, ele=document){
     observeSearch(callback, null, PLAYER_ROOT, ele, false, null);
+}
+
+export function observeSearchCommunityPointsSummary(callback, ele=document){
+    observeSearch(callback, null, COMMUNITY_POINTS_SUMMARY, ele, false, null);
+}
+
+export function observeGetCommunityPointsSummaryClaimButton(callback, communityPointsSummary){
+    observeSearch(callback, null, COMMUNITY_POINTS_SUMMARY_CLAIM_BUTTON, communityPointsSummary, false, null);
 }
