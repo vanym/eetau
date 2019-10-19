@@ -2,11 +2,34 @@
 
 import * as CONSTS from './consts.mjs';
 import { getCurrentPlayer,
+         getCurrentMediaPlayer,
+         matchesQuery,
          observeSearchPlayerRoot } from './twitch_objects.mjs';
 import { getSettings } from './common.mjs';
 
 const CLASS_PLAYER_CONTROLS = CONSTS.EXTENSION_CLASS_PREFIX + '-player-controls';
 const CLASS_PLAYER_CONTROLS_SCRIPT = CLASS_PLAYER_CONTROLS + '-script';
+
+const SELECTORS = {
+    player: {
+        settings_menu: '.pl-menu',
+        settings_icon: '.pl-settings-icon',
+        settings_menu_advanced: '.qa-advanced-button',
+        settings_menu_advanced_ad_stats: '.qa-show-ad-stats-button > .pl-toggle > label',
+        settings_menu_advanced_video_stats: '.qa-show-stats-button > .pl-toggle > label',
+        settings_menu_advanced_latency_mode: '.qa-latency-mode-toggle  > .pl-toggle > label',
+        settings_menu_quality_button: '.qa-quality-button'
+    },
+    media_player: {
+        settings_menu: '*[data-a-target="player-settings-menu"]',
+        settings_icon: 'button[data-a-target="player-settings-button"]',
+        settings_menu_advanced: 'button[data-a-target="player-settings-menu-item-advanced"]',
+        settings_menu_advanced_ad_stats: '.tw-toggle[data-a-target="player-settings-submenu-advanced-ad-stats"] > label',
+        settings_menu_advanced_video_stats: '.tw-toggle[data-a-target="player-settings-submenu-advanced-video-stats"] > label',
+        settings_menu_advanced_latency_mode: '.tw-toggle[data-a-target="low-latency-toggle"] > label',
+        settings_menu_quality_button: 'button[data-a-target="player-settings-menu-item-quality"]'
+    }
+};
 
 const settings = getSettings(CLASS_PLAYER_CONTROLS_SCRIPT, CONSTS.DEFAULT_SETTINGS.PLAYER_CONTROLS_SETTINGS);
 
@@ -58,42 +81,38 @@ function changeSpeed(player, step_offset){
     }
 }
 
-function toggleAdvancedSettings(ele, type){
-    let menu = ele.querySelector('.pl-menu');
-    let si = ele.querySelector('.pl-settings-icon');
+function toggleAdvancedSettings(ele, type, selectors){
+    let menu = ele.querySelector(selectors.settings_menu);
+    let si = ele.querySelector(selectors.settings_icon);
     if(!si){return;}
     if(menu != null){si.click();}
     si.click();
     (function(){
-    let sia = ele.querySelector('.qa-advanced-button');
+    let sia = ele.querySelector(selectors.settings_menu_advanced);
     if(!sia){return;}
     sia.click();
     let selector;
     switch(type){
-        case 'ad_stats': selector = '.qa-show-ad-stats-button'; break;
-        case 'video_stats': selector = '.qa-show-stats-button'; break;
-        case 'latency_mode': selector = '.qa-latency-mode-toggle'; break;
+        case 'ad_stats': selector = selectors.settings_menu_advanced_ad_stats; break;
+        case 'video_stats': selector = selectors.settings_menu_advanced_video_stats; break;
+        case 'latency_mode': selector = selectors.settings_menu_advanced_latency_mode; break;
     }
     if(!selector){return;}
     let siab = ele.querySelector(selector);
     if(!siab){return;}
-    let siabt = siab.querySelector('.pl-toggle')
-    if(!siabt){return;}
-    let siabtl = siabt.querySelector('label');
-    if(!siabtl){return;}
-    siabtl.click();
+    siab.click();
     })();
     si.click();
 }
 
-function changeQuality(ele, up){
-    let menu = ele.querySelector('.pl-menu');
-    let si = ele.querySelector('.pl-settings-icon');
+function changeQualityPlayer(ele, up){
+    let menu = ele.querySelector(SELECTORS.player.settings_menu);
+    let si = ele.querySelector(SELECTORS.player.settings_icon);
     if(!si){return;}
     if(menu != null){si.click();}
     si.click();
     (function(){
-    let siq = ele.querySelector('.qa-quality-button');
+    let siq = ele.querySelector(SELECTORS.player.settings_menu_quality_button);
     if(!siq){return;}
     siq.click();
     let siqms = ele.querySelector('.pl-menu__section');
@@ -111,7 +130,33 @@ function changeQuality(ele, up){
     if(!siqmiasb){return;}
     siqmiasb.click();
     })();
-    menu = ele.querySelector('.pl-menu');
+    menu = ele.querySelector(SELECTORS.player.settings_menu);
+    if(menu != null){si.click();}
+}
+
+function changeQualityMediaPlayer(ele, up){
+    let menu = ele.querySelector(SELECTORS.media_player.settings_menu);
+    let si = ele.querySelector(SELECTORS.media_player.settings_icon);
+    if(!si){return;}
+    if(menu != null){si.click();}
+    si.click();
+    (function(){
+    let siq = ele.querySelector(SELECTORS.media_player.settings_menu_quality_button);
+    if(!siq){return;}
+    siq.click();
+    let quas = ele.querySelectorAll('*[data-a-target="player-settings-submenu-quality-option"] > input');
+    let aquas = Array.from(quas);
+    let i = aquas.findIndex(n => n.checked);
+    if(up){
+        --i;
+    }else{
+        ++i;
+    }
+    let nqua = aquas[i];
+    if(!nqua){return;}
+    nqua.click();
+    })();
+    menu = ele.querySelector(SELECTORS.media_player.settings_menu);
     if(menu != null){si.click();}
 }
 
@@ -120,41 +165,99 @@ function changeQualityTemp(player, up){
     let setQuality = player._setBackendQuality.bind(player);
 }
 
+function getMediaPlayerRoot(media_player){
+    return matchesQuery(media_player.mediaSinkManager.video, '.persistent-player', true);
+}
+
 function handleKeyboardEvent(e){
     let player_root = getCurrentPlayer(e.target);
-    if(!player_root){return;}
-    let player = player_root.props.player;
+    let media_player_root = getCurrentMediaPlayer(e.target);
+    if(!(player_root || media_player_root)){return;}
+    let player = player_root && player_root.props.player;
+    let media_player = media_player_root && media_player_root.props.mediaPlayerInstance;
     let actions = 0;
     if(e.code == settings.keys.fullscreen_toggle){
-        player.setFullscreen(!player.getFullscreen());
+        if(player){
+            player.setFullscreen(!player.getFullscreen());
+        }
+        if(media_player){
+            let root = getMediaPlayerRoot(media_player);
+            if(root){
+                let fullscreen_button = root.querySelector('button[data-a-target="player-fullscreen-button"]');
+                if(fullscreen_button){
+                    fullscreen_button.click();
+                }
+            }
+        }
         ++actions;
     }
     if(e.code == settings.keys.mute_toggle){
-        player.setMuted(!player.getMuted());
+        if(player){
+            player.setMuted(!player.getMuted());
+        }
+        if(media_player){
+            media_player.setMuted(!media_player.isMuted());
+        }
         ++actions;
     }
     if(e.code == settings.keys.pause_toggle){
-        if(player.isPaused()){
-            player.play();
+        let pl = (player || media_player);
+        if(pl.isPaused()){
+            pl.play();
         }else{
-            player.pause();
+            pl.pause();
         }
         ++actions;
     }
     if(e.code == settings.keys.theatre_toggle){
-        player.setTheatre(!player.getTheatre());
+        if(player){
+            player.setTheatre(!player.getTheatre());
+        }
+        if(media_player){
+            let root = getMediaPlayerRoot(media_player);
+            if(root){
+                let theatre_mode_button = root.querySelector('button[data-a-target="player-theatre-mode-button"]');
+                if(theatre_mode_button){
+                    theatre_mode_button.click();
+                }
+            }
+        }
         ++actions;
     }
     if(e.code == settings.keys.ad_stats){
-        toggleAdvancedSettings(player_root.props.root, 'ad_stats');
+        if(player_root){
+            toggleAdvancedSettings(player_root.props.root, 'ad_stats', SELECTORS.player);
+        }
+        if(media_player){
+            let root = getMediaPlayerRoot(media_player);
+            if(root){
+                toggleAdvancedSettings(root, 'ad_stats', SELECTORS.media_player);
+            }
+        }
         ++actions;
     }
     if(e.code == settings.keys.video_stats){
-        toggleAdvancedSettings(player_root.props.root, 'video_stats');
+        if(player_root){
+            toggleAdvancedSettings(player_root.props.root, 'video_stats', SELECTORS.player);
+        }
+        if(media_player){
+            let root = getMediaPlayerRoot(media_player);
+            if(root){
+                toggleAdvancedSettings(root, 'video_stats', SELECTORS.media_player);
+            }
+        }
         ++actions;
     }
     if(e.code == settings.keys.latency_mode){
-        toggleAdvancedSettings(player_root.props.root, 'latency_mode');
+        if(player_root){
+            toggleAdvancedSettings(player_root.props.root, 'latency_mode', SELECTORS.player);
+        }
+        if(media_player){
+            let root = getMediaPlayerRoot(media_player);
+            if(root){
+                toggleAdvancedSettings(root, 'latency_mode', SELECTORS.media_player);
+            }
+        }
         ++actions;
     }
     if(e.code == settings.keys.left_side_toggle){
@@ -174,19 +277,35 @@ function handleKeyboardEvent(e){
         ++actions;
     }
     if(e.code == settings.keys.speed_up){
-        changeSpeed(player, 1);
+        changeSpeed(player || media_player, 1);
         ++actions;
     }
     if(e.code == settings.keys.speed_down){
-        changeSpeed(player, -1);
+        changeSpeed(player || media_player, -1);
         ++actions;
     }
     if(e.code == settings.keys.quality_up){
-        changeQuality(player_root.props.root, true);
+        if(player_root){
+            changeQualityPlayer(player_root.props.root, true);
+        }
+        if(media_player){
+            let root = getMediaPlayerRoot(media_player);
+            if(root){
+                changeQualityMediaPlayer(root, true);
+            }
+        }
         ++actions;
     }
     if(e.code == settings.keys.quality_down){
-        changeQuality(player_root.props.root, false);
+        if(player_root){
+            changeQualityPlayer(player_root.props.root, false);
+        }
+        if(media_player){
+            let root = getMediaPlayerRoot(media_player);
+            if(root){
+                changeQualityMediaPlayer(root, false);
+            }
+        }
         ++actions;
     }
 }

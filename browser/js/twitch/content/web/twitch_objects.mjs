@@ -10,6 +10,7 @@ const VOD_CHAT_CONTAINER = '.qa-vod-chat';
 const CHAT_LIST = '.chat-list';
 const PLAYER = '.player';
 const PLAYER_ROOT = '.player-root';
+const MEDIA_PLAYER_ROOT = '.highwind-video-player';
 const CLIPS_BROADCASTER_INFO = '.clips-broadcaster-info';
 const TWITCH_LOG_SELECTOR = 'div[role="log"]';
 
@@ -245,6 +246,18 @@ export function getCurrentPlayer(ele=document){
         const node = searchReactParents(
             getReactInstance(matchesQuery(ele, PLAYER_ROOT, true)),
             n => n.stateNode && n.stateNode.props && n.stateNode.props.player
+        );
+        player = node.stateNode;
+    }catch(_){}
+    return player;
+}
+
+export function getCurrentMediaPlayer(ele=document){
+    let player;
+    try{
+        const node = searchReactParents(
+            getReactInstance(matchesQuery(ele, MEDIA_PLAYER_ROOT, true)),
+            n => n.stateNode && n.stateNode.props && n.stateNode.props.mediaPlayerInstance
         );
         player = node.stateNode;
     }catch(_){}
