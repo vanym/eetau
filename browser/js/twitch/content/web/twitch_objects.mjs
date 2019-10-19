@@ -148,23 +148,11 @@ function observeSearch(callbackFound, callbackLost, selector, ele=document, one=
 }
 
 function observeGet(callback, ele, selector){
-    let observer;
-    function found(node){
-        callback(node);
-        observer.disconnect();
-        found = function(){};
-    }
-    observer = new window.MutationObserver(mutations => mutations.forEach(mutation => {
+    let observer = new window.MutationObserver(mutations => mutations.forEach(mutation => {
         if(mutation.type == 'childList'){
             for(let node of mutation.addedNodes){
-                if(node.matches && node.matches(selector)){
-                    found(node);
-                }
-                if(node.querySelector){
-                    let f = node.querySelector(selector);
-                    if(f){
-                        found(f);
-                    }
+                if(node.matches(selector)){
+                    callback(node);
                 }
             }
         }
@@ -172,7 +160,7 @@ function observeGet(callback, ele, selector){
     observer.observe(ele, {childList: true, subtree: false});
     let nodes = ele.querySelectorAll(selector);
     for(let node of nodes){
-        found(node);
+        callback(node);
     }
 }
 
