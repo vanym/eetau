@@ -84,6 +84,18 @@ function observeSearch(callbackFound, callbackLost, selector, ele=document, one=
     let observer;
     let timeout_id;
     let set = new Set();
+    function lost_check_recursively(ele){
+        if(set.delete(ele)){
+            if(callbackLost){
+                callbackLost(ele);
+            }
+        }
+        if(ele.children){
+            for(let child of ele.children){
+                lost_check_recursively(child);
+            }
+        }
+    }
     function disable(){
         observer.disconnect();
         clearTimeout(timeout_id);
@@ -132,13 +144,7 @@ function observeSearch(callbackFound, callbackLost, selector, ele=document, one=
                 }
             }
             for(let node of mutation.removedNodes){
-                if(node.matches && node.matches(selector)){
-                    lost(node);
-                }
-                if(node.querySelectorAll){
-                    let fs = node.querySelectorAll(selector);
-                    lostList(fs);
-                }
+                lost_check_recursively(node);
             }
         }
     }));
