@@ -13,6 +13,7 @@ export const DEFAULT_SETTINGS = {
         force_enable: false
     },
     PLAYER_CONTROLS_SETTINGS: {
+        prevent_conflicts: true,
         keys: {
             fullscreen_toggle: 'KeyF',
             mute_toggle: 'KeyM',

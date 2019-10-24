@@ -4,11 +4,18 @@ import * as CONSTS from './consts.mjs';
 import { getCurrentPlayer,
          getCurrentMediaPlayer,
          matchesQuery,
-         observeSearchPlayerRoot } from './twitch_objects.mjs';
+         observeSearchPlayerRoot,
+         observeSearchMediaPlayerRoot } from './twitch_objects.mjs';
 import { getSettings } from './common.mjs';
 
 const CLASS_PLAYER_CONTROLS = CONSTS.EXTENSION_CLASS_PREFIX + '-player-controls';
 const CLASS_PLAYER_CONTROLS_SCRIPT = CLASS_PLAYER_CONTROLS + '-script';
+const VAR_PREFIX = '__' + CONSTS.EXTENSION_VAR_PREFIX + '_' + 'player_controls' + '_';
+
+const VAR_NAMES = {
+    last_date_set_muted: VAR_PREFIX + 'last_date_set_muted',
+    last_date_set_playback_rate: VAR_PREFIX + 'last_date_set_playback_rate'
+};
 
 const SELECTORS = {
     player: {
@@ -34,7 +41,7 @@ const SELECTORS = {
 const settings = getSettings(CLASS_PLAYER_CONTROLS_SCRIPT, CONSTS.DEFAULT_SETTINGS.PLAYER_CONTROLS_SETTINGS);
 
 function guard(ele, name){
-    let g = '__' + CONSTS.EXTENSION_VAR_PREFIX + '_' + 'player_controls' + '_' + name;
+    let g = VAR_PREFIX + name;
     if(ele[g]){
         return true;
     }else{
@@ -76,9 +83,7 @@ function changeSpeed(player, step_offset){
     let rate = player.getPlaybackRate();
     let i = findClosestIndex(rate, speed_templates);
     let next = speed_templates[i + step_offset];
-    if(next){
-        player.setPlaybackRate(next);
-    }
+    player.setPlaybackRate(next || rate);
 }
 
 function toggleAdvancedSettings(ele, type, selectors){
@@ -192,12 +197,9 @@ function handleKeyboardEvent(e){
         ++actions;
     }
     if(e.code == settings.keys.mute_toggle){
-        if(player){
-            player.setMuted(!player.getMuted());
-        }
-        if(media_player){
-            media_player.setMuted(!media_player.isMuted());
-        }
+        let isMuted = (player && player.getMuted) || (media_player && media_player.isMuted);
+        let any_player = (player || media_player);
+        any_player.setMuted(!isMuted.bind(any_player)());
         ++actions;
     }
     if(e.code == settings.keys.pause_toggle){
@@ -314,18 +316,58 @@ function isPopout(player_root){
     return player_root.props.options.player == 'popout' || player_root.props.options.player == 'clips-embed';
 }
 
+function isDateNear(date){
+    let now = new Date();
+    return ((now - date) < 50) ? true : false;
+}
+
+function patchPlayerSetters(player){
+    if(!guard(player, 'muted_setter_patched')){
+        let originalSetMuted = player.setMuted;
+        player.setMuted = function(...args){
+            if(isDateNear(this[VAR_NAMES.last_date_set_muted])){
+                return;
+            }
+            this[VAR_NAMES.last_date_set_muted] = new Date();
+            return originalSetMuted.bind(this)(...args);
+        }
+    }
+    if(!guard(player, 'playback_rate_setter_patched')){
+        let originalSetPlaybackRate = player.setPlaybackRate;
+        player.setPlaybackRate = function(...args){
+            if(isDateNear(this[VAR_NAMES.last_date_set_playback_rate])){
+                return;
+            }
+            this[VAR_NAMES.last_date_set_playback_rate] = new Date();
+            return originalSetPlaybackRate.bind(this)(...args);
+        }
+    }
+}
+
 function processPlayerRoot(ele){
     let player_root = getCurrentPlayer(ele);
-    if(!guard(player_root.props.root, 'keydown_listener')){
-        player_root.props.root.addEventListener('keydown', handleKeyboardEvent);
+    let player = player_root && player_root.props.player;
+    if(player){
+        if(settings.prevent_conflicts){
+            patchPlayerSetters(player);
+        }
     }
-    if(isPopout(player_root)){
-        player_root.props.root.focus();
+}
+
+function processMediaPlayerRoot(ele){
+    let media_player_root = getCurrentMediaPlayer(ele);
+    let media_player = media_player_root && media_player_root.props.mediaPlayerInstance;
+    if(media_player){
+        if(settings.prevent_conflicts){
+            patchPlayerSetters(media_player);
+        }
     }
 }
 
 function setup(){
     document.addEventListener('keydown', handleKeyboardEvent);
+    observeSearchPlayerRoot(processPlayerRoot);
+    observeSearchMediaPlayerRoot(processMediaPlayerRoot);
 }
 
 setup();

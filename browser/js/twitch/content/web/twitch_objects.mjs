@@ -323,6 +323,10 @@ export function observeSearchPlayerRoot(callback, ele=document){
     observeSearch(callback, null, PLAYER_ROOT, ele, false, null);
 }
 
+export function observeSearchMediaPlayerRoot(callback, ele=document){
+    observeSearch(callback, null, MEDIA_PLAYER_ROOT, ele, false, null);
+}
+
 export function observeSearchCommunityPointsSummary(callback, ele=document){
     observeSearch(callback, null, COMMUNITY_POINTS_SUMMARY, ele, false, null);
 }
