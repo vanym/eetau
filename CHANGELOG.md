@@ -6,6 +6,10 @@
  - Apply volume setting
  - Player controls feature
  - Community points auto claim bonus feature
+
+### Changed
+ - Options page organization
+
 ### Fix
  - Options page now reset properly
 
