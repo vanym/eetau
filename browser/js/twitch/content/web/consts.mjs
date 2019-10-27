@@ -68,10 +68,14 @@ export const DEFAULT_STORAGE = {
                     default_resolution: {width: 1280, height: 720},
                     fixed_size: false,
                     apply_volume: false,
-                    volume: 1
+                    volume: 1,
+                    apply_window_position: false,
+                    window_position: {left: 0, top: 0}
                 },
                 popout_chat: {
-                    window_size: {width: 400, height: 720}
+                    window_size: {width: 400, height: 720},
+                    apply_window_position: false,
+                    window_position: {left: 0, top: 0}
                 }
             }
         },

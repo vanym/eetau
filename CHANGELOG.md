@@ -4,6 +4,7 @@
 ### Added
  - Clips popout support
  - Apply volume setting
+ - Apply window position setting
  - Player controls feature
  - Community points auto claim bonus feature
 

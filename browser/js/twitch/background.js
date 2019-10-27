@@ -114,10 +114,14 @@ async function getTargetInfo(url, need_playable = true){
 async function openChat(channel_name){
     const CONSTS = await import('./content/web/consts.mjs');
     let stor = (await new Promise(r => storage.local.get(CONSTS.DEFAULT_STORAGE.LOCAL, r)));
-    let popout_chat = stor.settings.twitch.popout_chat.window_size;
+    let popout_chat = stor.settings.twitch.popout_chat;
     window.open('https://www.twitch.tv/popout/' + channel_name + '/chat?popout=', '_blank',
-                'width=' + popout_chat.width + ',' + 
-                'height=' + popout_chat.height + ',' + 
+                'width=' + popout_chat.window_size.width + ',' + 
+                'height=' + popout_chat.window_size.height + ',' + 
+                (popout_chat.apply_window_position ? (
+                'left=' + popout_chat.window_position.left + ',' + 
+                'top='  + popout_chat.window_position.top  + ',' + 
+                '') : '') + 
                 'resizable=yes' + ',' + 
                 'scrollbars=no' + ',' + 
                 'toolbar=no' + ',' + 
@@ -169,6 +173,10 @@ async function openPlayer(target_info){
     window.open(url.toString(), '_blank',
                 'width='  + (resolution.width  + offset.x) + ',' + 
                 'height=' + (resolution.height + offset.y) + ',' + 
+                (stor.settings.twitch.popout_player.apply_window_position ? (
+                'left=' + stor.settings.twitch.popout_player.window_position.left + ',' + 
+                'top='  + stor.settings.twitch.popout_player.window_position.top  + ',' + 
+                '') : '') + 
                 'resizable=yes' + ',' + 
                 'scrollbars=no' + ',' + 
                 'toolbar=no' + ',' + 
