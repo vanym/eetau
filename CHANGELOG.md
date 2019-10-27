@@ -7,6 +7,8 @@
  - Apply window position setting
  - Player controls feature
  - Community points auto claim bonus feature
+ - Invisible space at the end of timestamp
+ - Option to prevent chat badge selection
 
 ### Changed
  - Options page organization

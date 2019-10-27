@@ -10,7 +10,8 @@ export const DEV_MODE = false;
 export const DEFAULT_SETTINGS = {
     CUSTOM_TIMESTAMPS_SETTINGS: {
         timestamp_format: '%H:%M',
-        force_enable: false
+        force_enable: false,
+        prevent_chat_badge_selection: true
     },
     PLAYER_CONTROLS_SETTINGS: {
         prevent_conflicts: true,

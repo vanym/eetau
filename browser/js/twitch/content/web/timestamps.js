@@ -9,11 +9,14 @@ import formatDate from './date_format.mjs';
 
 const CLASS_CHAT_LINE_TIMESTAMP = EXTENSION_CLASS_PREFIX + '-chat-line-timestamp';
 const CLASS_CHAT_LINE_TIMESTAMP_SPAN = CLASS_CHAT_LINE_TIMESTAMP + '-span';
+const CLASS_CHAT_LINE_TIMESTAMP_SPAN_TEXT = CLASS_CHAT_LINE_TIMESTAMP_SPAN + '-text';
+const CLASS_CHAT_LINE_TIMESTAMP_SPAN_INVISIBLE_SPACE = CLASS_CHAT_LINE_TIMESTAMP_SPAN + '-invisible-space';
 const CLASS_CHAT_LINE_TIMESTAMP_STYLE = CLASS_CHAT_LINE_TIMESTAMP + '-style';
 const CLASS_CHAT_LINE_TIMESTAMP_SCRIPT = CLASS_CHAT_LINE_TIMESTAMP + '-script';
 
 const TWITCH_CLASS_CHAT_LINE_TIMESTAMP = 'chat-line__timestamp';
 const TWITCH_CHAT_LINE_TIMESTAMP_SELECTOR = 'span.' + TWITCH_CLASS_CHAT_LINE_TIMESTAMP + ':not(' + '.' + CLASS_CHAT_LINE_TIMESTAMP_SPAN + ')';
+const TWITCH_CHAT_BADGE_SELECTOR = '.chat-badge';
 
 const settings = getSettings(CLASS_CHAT_LINE_TIMESTAMP_SCRIPT, DEFAULT_SETTINGS.CUSTOM_TIMESTAMPS_SETTINGS);
 
@@ -46,7 +49,14 @@ function processLineNode(node){
         span.classList.add(CLASS_CHAT_LINE_TIMESTAMP_SPAN);
         span.setAttribute('iso', date.toISOString());
         span.setAttribute('unix', date.getTime());
-        span.textContent = getTimeString(date);
+        let span_text = document.createElement('span');
+        span_text.classList.add(CLASS_CHAT_LINE_TIMESTAMP_SPAN_TEXT);
+        span_text.textContent = getTimeString(date);
+        span.appendChild(span_text);
+        let span_space = document.createElement('span');
+        span_space.classList.add(CLASS_CHAT_LINE_TIMESTAMP_SPAN_INVISIBLE_SPACE);
+        span_space.textContent = ' ';
+        span.appendChild(span_space);
         node.insertBefore(span, node.firstChild);
     }
 }
@@ -78,6 +88,10 @@ function addStyle(){
     style.classList.add(CLASS_CHAT_LINE_TIMESTAMP_STYLE);
     document.head.appendChild(style);
     style.sheet.insertRule(TWITCH_CHAT_LINE_TIMESTAMP_SELECTOR + '{display: none}');
+    style.sheet.insertRule('.' + CLASS_CHAT_LINE_TIMESTAMP_SPAN_INVISIBLE_SPACE + '{font-size: 0; line-height: 0;}');
+    if(settings.prevent_chat_badge_selection){
+        style.sheet.insertRule(TWITCH_CHAT_BADGE_SELECTOR + '{user-select: none}');
+    }
     let staticRules = style.sheet.rules.length;
     function styleHide(hide){
         let haveHide = style.sheet.rules.length > staticRules;
