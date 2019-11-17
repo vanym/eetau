@@ -19,7 +19,7 @@ function getVideoMaxResolution(resolutions){
     }
 }
 
-async function getTargetInfo(url, need_stream = true){
+async function getTargetInfo(url, need_playable = true){
     let url_info = parseUrl(url);
     let target_info = {};
     if(url_info.paths[0] == 'videos'){
@@ -34,14 +34,41 @@ async function getTargetInfo(url, need_stream = true){
             let response_json = await response.json();
             if(response_json){
                 target_info.channel_name = response_json.channel.name;
-                target_info.channel_id = response_json.channel._id;
+                target_info.channel_id = parseInt(response_json.channel._id);
                 target_info.video.id = response_json._id;
                 target_info.video.resolution = getVideoMaxResolution(Object.values(response_json.resolutions));
             }
         }
+    }else if(url_info.paths[1] == 'clip' || url_info.domains[2] == 'clips'){
+        let slug;
+        if(url_info.paths[1] == 'clip'){
+            slug = url_info.paths[2];
+        }else if(url_info.domains[2] == 'clips'){
+            if(url_info.paths[0] == 'embed'){
+                slug = url_info.searchParams.get('clip');
+            }else{
+                slug = url_info.paths[0];
+            }
+        }
+        if(slug){
+            let response = await fetch(TWITCH_KRAKEN + '/clips/' + slug, TWITCH_FETCH_INIT);
+            if(response && response.status == 200){
+                let response_json = await response.json();
+                if(response_json){
+                    target_info.clip = {};
+                    target_info.clip.slug = response_json.slug;
+                    target_info.channel_name = response_json.broadcaster.name;
+                    target_info.channel_id = parseInt(response_json.broadcaster.id);
+                    if(response_json.vod && need_playable){
+                        let vod_target_info = await getTargetInfo(response_json.vod.url);
+                        target_info.video = vod_target_info.video;
+                    }
+                }
+            }
+        }
     }else{
         target_info.channel_name = url_info.paths[0];
-        if(need_stream){
+        if(need_playable){
             let response = await fetch(TWITCH_KRAKEN + '/users' + '?login=' + target_info.channel_name, TWITCH_FETCH_INIT);
             if(response && response.status == 200){
                 let response_json = await response.json();
@@ -58,7 +85,7 @@ async function getTargetInfo(url, need_stream = true){
                             target_info.stream.resolution = {};
                             target_info.stream.resolution.height = response_json.stream.video_height;
                             target_info.stream.resolution.width = response_json.stream.video_height * (16/9);
-                            let stream_id = response_json.stream._id;
+                            let stream_id = parseInt(response_json.stream._id);
                             let response = await fetch(TWITCH_KRAKEN + '/channels' + '/' + target_info.channel_id + '/videos' + '?limit=4&broadcast_type=archive', TWITCH_FETCH_INIT);
                             if(response && response.status == 200){
                                 let response_json = await response.json();
@@ -87,10 +114,14 @@ async function getTargetInfo(url, need_stream = true){
 async function openChat(channel_name){
     const CONSTS = await import('./content/web/consts.mjs');
     let stor = (await new Promise(r => storage.local.get(CONSTS.DEFAULT_STORAGE.LOCAL, r)));
-    let popout_chat = stor.settings.twitch.popout_chat.window_size;
+    let popout_chat = stor.settings.twitch.popout_chat;
     window.open('https://www.twitch.tv/popout/' + channel_name + '/chat?popout=', '_blank',
-                'width=' + popout_chat.width + ',' + 
-                'height=' + popout_chat.height + ',' + 
+                'width=' + popout_chat.window_size.width + ',' + 
+                'height=' + popout_chat.window_size.height + ',' + 
+                (popout_chat.apply_window_position ? (
+                'left=' + popout_chat.window_position.left + ',' + 
+                'top='  + popout_chat.window_position.top  + ',' + 
+                '') : '') + 
                 'resizable=yes' + ',' + 
                 'scrollbars=no' + ',' + 
                 'toolbar=no' + ',' + 
@@ -106,9 +137,18 @@ async function openPlayer(target_info){
     const CONSTS = await import('./content/web/consts.mjs');
     let stor = (await new Promise(r => storage.local.get(CONSTS.DEFAULT_STORAGE.LOCAL, r)));
     let url = new URL('https://player.twitch.tv/');
-    url.searchParams.append('volume', '1');
+    if(stor.settings.twitch.popout_player.apply_volume){
+        url.searchParams.append('volume', String(stor.settings.twitch.popout_player.volume));
+    }
     let resolution;
-    if(target_info.video){
+    if(target_info.clip){
+        url.hostname = 'clips.twitch.tv';
+        url.pathname = 'embed';
+        url.searchParams.append('clip', target_info.clip.slug);
+        if(target_info.video && target_info.video.resolution){
+            resolution = target_info.video.resolution;
+        }
+    }else if(target_info.video){
         url.searchParams.append('video', target_info.video.id);
         if(target_info.video.time){
             url.searchParams.append('time', target_info.video.time);
@@ -133,6 +173,10 @@ async function openPlayer(target_info){
     window.open(url.toString(), '_blank',
                 'width='  + (resolution.width  + offset.x) + ',' + 
                 'height=' + (resolution.height + offset.y) + ',' + 
+                (stor.settings.twitch.popout_player.apply_window_position ? (
+                'left=' + stor.settings.twitch.popout_player.window_position.left + ',' + 
+                'top='  + stor.settings.twitch.popout_player.window_position.top  + ',' + 
+                '') : '') + 
                 'resizable=yes' + ',' + 
                 'scrollbars=no' + ',' + 
                 'toolbar=no' + ',' + 

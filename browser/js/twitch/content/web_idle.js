@@ -18,6 +18,21 @@ async function injectScripts(){
         script.setAttribute('src', browser.extension.getURL(WEB_DIR + '/timestamps.js'));
         document.head.appendChild(script);
     }
+    let player_controls = stor_sync.settings.twitch.player.controls;
+    if(player_controls){
+        const CLASS_PLAYER_CONTROLS = CONSTS.EXTENSION_CLASS_PREFIX + '-player-controls';
+        const CLASS_PLAYER_CONTROLS_SCRIPT = CLASS_PLAYER_CONTROLS + '-script';
+        let script = document.createElement('script');
+        script.setAttribute('type', 'module');
+        script.id = CLASS_PLAYER_CONTROLS_SCRIPT;
+        script.setAttribute('settings', JSON.stringify(stor_sync.settings.twitch.player.controls_settings));
+        script.setAttribute('src', browser.extension.getURL(WEB_DIR + '/player_controls.js'));
+        document.head.appendChild(script);
+    }
+    let auto_claim_points = stor_sync.settings.twitch.chat.community_points_settings.auto_claim_bonus;
+    if(auto_claim_points){
+        injectModuleScript(browser.extension.getURL(WEB_DIR + '/community_points_auto_claim.js'));
+    }
     if(CONSTS.DEV_MODE){
         injectModuleScript(browser.extension.getURL(WEB_DIR + '/dev.js'));
     }

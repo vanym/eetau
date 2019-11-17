@@ -22,6 +22,6 @@ function fixSize(){
     }
 }
 
-if(window.location.hostname == 'player.twitch.tv'){
+if(window.location.hostname == 'player.twitch.tv' || window.location.hostname == 'clips.twitch.tv'){
     fixSize();
 }

@@ -10,7 +10,26 @@ export const DEV_MODE = false;
 export const DEFAULT_SETTINGS = {
     CUSTOM_TIMESTAMPS_SETTINGS: {
         timestamp_format: '%H:%M',
-        force_enable: false
+        force_enable: false,
+        prevent_chat_badge_selection: true
+    },
+    PLAYER_CONTROLS_SETTINGS: {
+        prevent_conflicts: true,
+        keys: {
+            fullscreen_toggle: 'KeyF',
+            mute_toggle: 'KeyM',
+            pause_toggle: 'KeyK',
+            theatre_toggle: 'KeyT',
+            video_stats: 'KeyI',
+            ad_stats: null,
+            latency_mode: 'KeyL',
+            left_side_toggle: 'BracketLeft',
+            right_side_toggle: 'BracketRight',
+            speed_up: 'Period',
+            speed_down: 'Comma',
+            quality_up: 'Equal',
+            quality_down: 'Minus'
+        }
     }
 }
 
@@ -21,7 +40,14 @@ export const DEFAULT_STORAGE = {
                 chat: {
                     show_video_playback: true,
                     custom_timestamps: true,
-                    custom_timestamps_settings: DEFAULT_SETTINGS.CUSTOM_TIMESTAMPS_SETTINGS
+                    custom_timestamps_settings: DEFAULT_SETTINGS.CUSTOM_TIMESTAMPS_SETTINGS,
+                    community_points_settings: {
+                        auto_claim_bonus: false
+                    }
+                },
+                player: {
+                    controls: true,
+                    controls_settings: DEFAULT_SETTINGS.PLAYER_CONTROLS_SETTINGS
                 },
                 popout_chat: {
                     change_title: true,
@@ -41,10 +67,16 @@ export const DEFAULT_STORAGE = {
             twitch: {
                 popout_player: {
                     default_resolution: {width: 1280, height: 720},
-                    fixed_size: false
+                    fixed_size: false,
+                    apply_volume: false,
+                    volume: 1,
+                    apply_window_position: false,
+                    window_position: {left: 0, top: 0}
                 },
                 popout_chat: {
-                    window_size: {width: 400, height: 720}
+                    window_size: {width: 400, height: 720},
+                    apply_window_position: false,
+                    window_position: {left: 0, top: 0}
                 }
             }
         },

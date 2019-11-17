@@ -9,8 +9,12 @@ const ROOM_SELECTOR = '.room-selector';
 const VOD_CHAT_CONTAINER = '.qa-vod-chat';
 const CHAT_LIST = '.chat-list';
 const PLAYER = '.player';
+const PLAYER_ROOT = '.player-root';
+const MEDIA_PLAYER_ROOT = '.highwind-video-player';
 const CLIPS_BROADCASTER_INFO = '.clips-broadcaster-info';
 const TWITCH_LOG_SELECTOR = 'div[role="log"]';
+const COMMUNITY_POINTS_SUMMARY = '.community-points-summary';
+const COMMUNITY_POINTS_SUMMARY_CLAIM_BUTTON = '.claimable-bonus__icon';
 
 function getReactInstance(element){
     for(const key in element){
@@ -53,9 +57,25 @@ function searchReactChildren(node, predicate, maxDepth = 15, depth = 0){
     return null;
 }
 
-export function matchesQuery(ele, selector){
+function matchesParents(ele, selector){
+    let parent = ele.parentElement;
+    while(parent){
+        if(parent.matches && parent.matches(selector)){
+            return parent;
+        }
+        parent = parent.parentElement;
+    }
+}
+
+export function matchesQuery(ele, selector, checkParents = false){
     if(ele.matches && ele.matches(selector)){
         return ele;
+    }
+    if(checkParents){
+        let parentMatch = matchesParents(ele, selector);
+        if(parentMatch){
+            return parentMatch;
+        }
     }
     return ele.querySelector(selector);
 }
@@ -64,6 +84,18 @@ function observeSearch(callbackFound, callbackLost, selector, ele=document, one=
     let observer;
     let timeout_id;
     let set = new Set();
+    function lost_check_recursively(ele){
+        if(set.delete(ele)){
+            if(callbackLost){
+                callbackLost(ele);
+            }
+        }
+        if(ele.children){
+            for(let child of ele.children){
+                lost_check_recursively(child);
+            }
+        }
+    }
     function disable(){
         observer.disconnect();
         clearTimeout(timeout_id);
@@ -90,6 +122,7 @@ function observeSearch(callbackFound, callbackLost, selector, ele=document, one=
         }
     }
     function lost(e){
+        set.delete(e);
         if(callbackLost){
             callbackLost(e);
         }
@@ -111,13 +144,7 @@ function observeSearch(callbackFound, callbackLost, selector, ele=document, one=
                 }
             }
             for(let node of mutation.removedNodes){
-                if(node.matches && node.matches(selector)){
-                    lost(node);
-                }
-                if(node.querySelectorAll){
-                    let fs = node.querySelectorAll(selector);
-                    lostList(fs);
-                }
+                lost_check_recursively(node);
             }
         }
     }));
@@ -133,7 +160,7 @@ function observeGet(callback, ele, selector){
     let observer = new window.MutationObserver(mutations => mutations.forEach(mutation => {
         if(mutation.type == 'childList'){
             for(let node of mutation.addedNodes){
-                if(node.matches(selector)){
+                if(node.matches && node.matches(selector)){
                     callback(node);
                 }
             }
@@ -214,8 +241,20 @@ export function getCurrentPlayer(ele=document){
     let player;
     try{
         const node = searchReactParents(
-            getReactInstance(ele.querySelector(PLAYER)),
-            n => n.stateNode && n.stateNode.player
+            getReactInstance(matchesQuery(ele, PLAYER_ROOT, true)),
+            n => n.stateNode && n.stateNode.props && n.stateNode.props.player
+        );
+        player = node.stateNode;
+    }catch(_){}
+    return player;
+}
+
+export function getCurrentMediaPlayer(ele=document){
+    let player;
+    try{
+        const node = searchReactParents(
+            getReactInstance(matchesQuery(ele, MEDIA_PLAYER_ROOT, true)),
+            n => n.stateNode && n.stateNode.props && n.stateNode.props.mediaPlayerInstance
         );
         player = node.stateNode;
     }catch(_){}
@@ -278,4 +317,20 @@ export function observeGetChatRoomComponent(callback, roomSelector){
 
 export function observeSearchChatLog(callback, ele=document){
     observeSearch(callback, null, TWITCH_LOG_SELECTOR, ele, true);
+}
+
+export function observeSearchPlayerRoot(callback, ele=document){
+    observeSearch(callback, null, PLAYER_ROOT, ele, false, null);
+}
+
+export function observeSearchMediaPlayerRoot(callback, ele=document){
+    observeSearch(callback, null, MEDIA_PLAYER_ROOT, ele, false, null);
+}
+
+export function observeSearchCommunityPointsSummary(callback, ele=document){
+    observeSearch(callback, null, COMMUNITY_POINTS_SUMMARY, ele, false, null);
+}
+
+export function observeGetCommunityPointsSummaryClaimButton(callback, communityPointsSummary){
+    observeSearch(callback, null, COMMUNITY_POINTS_SUMMARY_CLAIM_BUTTON, communityPointsSummary, false, null);
 }
