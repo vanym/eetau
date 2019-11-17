@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 1.1.0 - 2019-11-17
 ### Added
  - Clips popout support
  - Apply volume setting
