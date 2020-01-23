@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+### Changed
+ - Update html selectors
+
 ## 1.1.0 - 2019-11-17
 ### Added
  - Clips popout support
