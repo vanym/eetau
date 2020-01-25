@@ -15,6 +15,7 @@ const CLIPS_BROADCASTER_INFO = '.clips-broadcaster-info';
 const TWITCH_LOG_SELECTOR = 'div[role="log"]';
 const COMMUNITY_POINTS_SUMMARY = '.community-points-summary';
 const COMMUNITY_POINTS_SUMMARY_CLAIM_BUTTON = '.claimable-bonus__icon';
+const RAID_BANNER = 'div[data-test-selector="raid-banner"]';
 
 function getReactInstance(element){
     for(const key in element){
@@ -333,4 +334,8 @@ export function observeSearchCommunityPointsSummary(callback, ele=document){
 
 export function observeGetCommunityPointsSummaryClaimButton(callback, communityPointsSummary){
     observeSearch(callback, null, COMMUNITY_POINTS_SUMMARY_CLAIM_BUTTON, communityPointsSummary, false, null);
+}
+
+export function observeSearchRaidBanner(callback, ele=document){
+    observeSearch(callback, null, RAID_BANNER, ele, false, null);
 }

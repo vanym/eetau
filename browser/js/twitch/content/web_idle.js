@@ -33,6 +33,10 @@ async function injectScripts(){
     if(auto_claim_points){
         injectModuleScript(browser.extension.getURL(WEB_DIR + '/community_points_auto_claim.js'));
     }
+    let auto_leave_raids = stor_sync.settings.twitch.chat.auto_leave_raids;
+    if(auto_leave_raids){
+        injectModuleScript(browser.extension.getURL(WEB_DIR + '/raids_auto_leave.js'));
+    }
     if(CONSTS.DEV_MODE){
         injectModuleScript(browser.extension.getURL(WEB_DIR + '/dev.js'));
     }

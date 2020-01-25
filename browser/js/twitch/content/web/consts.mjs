@@ -43,7 +43,8 @@ export const DEFAULT_STORAGE = {
                     custom_timestamps_settings: DEFAULT_SETTINGS.CUSTOM_TIMESTAMPS_SETTINGS,
                     community_points_settings: {
                         auto_claim_bonus: false
-                    }
+                    },
+                    auto_leave_raids: false
                 },
                 player: {
                     controls: true,

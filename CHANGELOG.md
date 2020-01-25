@@ -1,6 +1,9 @@
 # Changelog
 
 ## Unreleased
+### Added
+ - Raids auto leave feature
+
 ### Changed
  - Update html selectors
 
