@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 1.1.1 - 2020-01-26
 ### Added
  - Raids auto leave feature
 
