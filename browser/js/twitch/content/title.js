@@ -18,7 +18,7 @@ async function titleChange(){
         if(add_channel_link){
             let trys = CONSTS.PAGE_LOAD_TIMEOUT / 1000;
             function tryAddChannelLink(){
-                let rooms_header = document.querySelector('.rooms-header');
+                let rooms_header = document.querySelector('.stream-chat-header');
                 if(rooms_header){
                     let room_selector = rooms_header.firstChild;
                     room_selector.classList.add('tw-absolute');

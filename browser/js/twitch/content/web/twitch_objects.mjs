@@ -5,16 +5,17 @@ import * as CONSTS from './consts.mjs';
 const REACT_ROOT = '#root div';
 const CHANNEL_CONTAINER = '.channel-page,.channel-root';
 const CHAT_CONTAINER = 'section[data-test-selector="chat-room-component-layout"]';
-const ROOM_SELECTOR = '.room-selector';
+const ROOM_SELECTOR = '.stream-chat';
 const VOD_CHAT_CONTAINER = '.qa-vod-chat';
 const CHAT_LIST = '.chat-list';
 const PLAYER = '.player';
 const PLAYER_ROOT = '.player-root';
-const MEDIA_PLAYER_ROOT = '.highwind-video-player';
+const MEDIA_PLAYER_ROOT = '.video-player';
 const CLIPS_BROADCASTER_INFO = '.clips-broadcaster-info';
 const TWITCH_LOG_SELECTOR = 'div[role="log"]';
 const COMMUNITY_POINTS_SUMMARY = '.community-points-summary';
 const COMMUNITY_POINTS_SUMMARY_CLAIM_BUTTON = '.claimable-bonus__icon';
+const RAID_BANNER = 'div[data-test-selector="raid-banner"]';
 
 function getReactInstance(element){
     for(const key in element){
@@ -333,4 +334,8 @@ export function observeSearchCommunityPointsSummary(callback, ele=document){
 
 export function observeGetCommunityPointsSummaryClaimButton(callback, communityPointsSummary){
     observeSearch(callback, null, COMMUNITY_POINTS_SUMMARY_CLAIM_BUTTON, communityPointsSummary, false, null);
+}
+
+export function observeSearchRaidBanner(callback, ele=document){
+    observeSearch(callback, null, RAID_BANNER, ele, false, null);
 }
