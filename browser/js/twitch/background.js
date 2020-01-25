@@ -90,7 +90,6 @@ async function getTargetInfo(url, need_playable = true){
                             if(response && response.status == 200){
                                 let response_json = await response.json();
                                 if(response_json){
-                                    window.test = response_json.videos;
                                     for(let video of response_json.videos){
                                         if(video.broadcast_id == stream_id){
                                             let reso = getVideoMaxResolution(video.resolutions);
