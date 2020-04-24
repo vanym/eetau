@@ -4,6 +4,9 @@
 ### Changed
  - Update media player getter
 
+### Fix
+ - Media player load hook to make prevent conflicts to work on dynamic loaded player
+
 ## 1.1.1 - 2020-01-26
 ### Added
  - Raids auto leave feature

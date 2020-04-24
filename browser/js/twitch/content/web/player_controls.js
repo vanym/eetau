@@ -344,7 +344,8 @@ function patchPlayerSetters(player){
     }
 }
 
-function processPlayerRoot(ele){
+async function processPlayerRoot(ele){
+    await new Promise(r => setTimeout(r, CONSTS.INSIDES_LOAD_TIMEOUT));
     let player_root = getCurrentPlayer(ele);
     let player = player_root && player_root.props.player;
     if(player){
@@ -354,7 +355,8 @@ function processPlayerRoot(ele){
     }
 }
 
-function processMediaPlayerRoot(ele){
+async function processMediaPlayerRoot(ele){
+    await new Promise(r => setTimeout(r, CONSTS.INSIDES_LOAD_TIMEOUT));
     let media_player_root = getCurrentMediaPlayer(ele);
     let media_player = media_player_root && media_player_root.props.mediaPlayerInstance;
     if(media_player){
