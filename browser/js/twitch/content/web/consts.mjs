@@ -5,6 +5,8 @@ export const EXTENSION_VAR_PREFIX = 'eetau';
 
 export const PAGE_LOAD_TIMEOUT = 30000;
 
+export const INSIDES_LOAD_TIMEOUT = 50;
+
 export const DEV_MODE = false;
 
 export const DEFAULT_SETTINGS = {
