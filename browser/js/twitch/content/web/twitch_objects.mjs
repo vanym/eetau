@@ -253,9 +253,10 @@ export function getCurrentPlayer(ele=document){
 export function getCurrentMediaPlayer(ele=document){
     let player;
     try{
-        const node = searchReactParents(
+        const node = searchReactChildren(
             getReactInstance(matchesQuery(ele, MEDIA_PLAYER_ROOT, true)),
-            n => n.stateNode && n.stateNode.props && n.stateNode.props.mediaPlayerInstance
+            n => n.stateNode && n.stateNode.props && n.stateNode.props.mediaPlayerInstance,
+            64
         );
         player = node.stateNode;
     }catch(_){}
