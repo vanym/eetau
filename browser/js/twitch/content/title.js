@@ -26,7 +26,7 @@ async function titleChange(){
                     room_selector.classList.add('tw-left-0');
                     let a = document.createElement('a');
                     a.id = 'channel-link';
-                    a.href = TWITCH_LINK + '/' + channel_name;
+                    a.href = CONSTS.TWITCH_LINK + '/' + channel_name;
                     a.text = channel_name;
                     a.target = '_blank';
                     a.style.textDecoration = 'none';

@@ -1,5 +1,11 @@
 'use strict';
 
+export const TWITCH_PATTERN = '*://*.twitch.tv/*';
+export const TWITCH_KRAKEN = 'https://api.twitch.tv/kraken';
+export const TWITCH_LINK = 'https://www.twitch.tv'
+export const TWITCH_CLIENT_ID = 'mcuge7d598c9v5v5r9e6u34iwem0vqb';
+export const TWITCH_FETCH_INIT = {headers: {'Client-ID': TWITCH_CLIENT_ID, 'Accept': 'application/vnd.twitchtv.v5+json'}};
+
 export const EXTENSION_CLASS_PREFIX = 'eetau';
 export const EXTENSION_VAR_PREFIX = 'eetau';
 
