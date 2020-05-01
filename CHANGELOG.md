@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+### Fix
+ - Stream up/down notifications stability
+
 ## 1.1.2 - 2020-04-25
 ### Changed
  - Update media player getter

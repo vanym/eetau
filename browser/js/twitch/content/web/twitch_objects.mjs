@@ -212,7 +212,7 @@ export function getChatControllerFromRoomSelector(ele=document){
         const node = searchReactChildren(
             getReactInstance(matchesQuery(ele, ROOM_SELECTOR)),
             n => n.stateNode && n.stateNode.props && n.stateNode.props.messageHandlerAPI && n.stateNode.props.chatConnectionAPI,
-            128
+            256
         );
         chatContentComponent = node.stateNode;
     }catch(_){}
@@ -339,4 +339,22 @@ export function observeGetCommunityPointsSummaryClaimButton(callback, communityP
 
 export function observeSearchRaidBanner(callback, ele=document){
     observeSearch(callback, null, RAID_BANNER, ele, false, null);
+}
+
+function waitGetBack(f, r, trys, delay){
+    let d = f();
+    if(d !== undefined){
+        r(d);
+    }else{
+        if(trys <= 0){
+            r();
+        }
+        setTimeout(() => {
+            waitGetBack(f, r, trys - 1);
+        }, delay);
+    }
+}
+
+export function waitGet(f, trys=(CONSTS.PAGE_LOAD_TIMEOUT / 100), delay=100){
+    return new Promise(r => {waitGetBack(f, r, trys, delay);});
 }

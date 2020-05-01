@@ -5,31 +5,14 @@ import { getChatController,
          getChatControllerFromRoomSelector,
          sendChatAdminMessage,
          sendNotifyMessage,
-         getPubsub, 
+         getPubsub,
+         waitGet,
          observeSearchRoomSelector } from './twitch_objects.mjs';
 
 const TWITCH_PUBSUB_VIDEO_PLAYBACK_TOPIC = 'video-playback-by-id';
 
-function waitGet(f, r, trys=(PAGE_LOAD_TIMEOUT / 100)){
-    let d = f();
-    if(d){
-        r(d);
-    }else{
-        if(trys <= 0){
-            r();
-        }
-        setTimeout(() => {
-            waitGet(f, r, trys - 1);
-        }, 100);
-    }
-}
-
-function waitGetPromise(f, trys=undefined){
-    return new Promise(r => {waitGet(f, r, trys)});
-}
-
 function waitGetPubsub(){
-    return waitGetPromise(getPubsub);
+    return waitGet(getPubsub);
 }
 
 let pubsubprod;
@@ -99,13 +82,18 @@ class ChannelInfo{
         this.chats.add(chat);
         clearTimeout(this.remove_timeout_id);
         if(this.listening == false){
-            this.add_timeout_id = setTimeout(this.addTimeout.bind(this), channel_change_timeout);
+            this.startAddTimeout();
         }
+    }
+    startAddTimeout(){
+        this.add_timeout_id = setTimeout(this.addTimeout.bind(this), channel_change_timeout);
     }
     addTimeout(){
         if(this.chats.size > 0 && this.listening == false){
             if(this.getID()){
                 this.listen();
+            }else{
+                this.startAddTimeout();
             }
         }
     }
