@@ -18,6 +18,7 @@ export const DEV_MODE = false;
 export const DEFAULT_SETTINGS = {
     CUSTOM_TIMESTAMPS_SETTINGS: {
         timestamp_format: '%H:%M',
+        tooltip_timestamp_format: '%Y.%m.%d %H:%M:%S.%ms',
         force_enable: false,
         prevent_chat_badge_selection: true
     },

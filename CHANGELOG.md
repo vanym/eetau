@@ -3,6 +3,7 @@
 ## Unreleased
 ### Added
  - Chat history loader feature
+ - Timestamps tooltips
 
 ### Fix
  - Stream up/down notifications stability
