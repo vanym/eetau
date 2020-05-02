@@ -34,6 +34,9 @@
             button.setting[type="keybind"]{
                 font-family: "Courier New", Courier
             }
+            .settings_div_chatlog_from_vod_messages_amount > input[type="number"] {
+                width:60px;
+            }
         </style>
         <script type="text/javascript" src="js/twitch/options.js"></script>
     </head>
@@ -143,6 +146,17 @@
                                     </div>
                                     <div class="settings_div settings_div_auto_leave_raids">
                                         <label><input path="sync.settings.twitch.chat.auto_leave_raids" class="setting" type="checkbox">Auto leave raids</input></label>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr class="settings_col_table_tr">
+                                <td>
+                                    <div class="settings_div settings_div_chatlog_from_vod">
+                                        <label><input path="sync.settings.twitch.chat.chatlog_from_vod" class="setting" type="checkbox">Load chat history<br/> from current stream video</input></label>
+                                    </div>
+                                    <div class="settings_div settings_div_chatlog_from_vod_messages_amount">
+                                        <button path="sync.settings.twitch.chat.chatlog_from_vod_settings.messages_amount" class="small-reset-button" type="button">R</button><!--
+                                        --><input path="sync.settings.twitch.chat.chatlog_from_vod_settings.messages_amount" class="setting" type="number">Messages amount</input><br/>
                                     </div>
                                 </td>
                             </tr>

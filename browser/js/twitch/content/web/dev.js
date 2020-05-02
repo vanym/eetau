@@ -12,6 +12,7 @@ import { getCurrentChat,
          getMessage,
          getChatSettings,
          getChatListPresentation,
+         getChatBufferController,
          observeSearchRoomSelector,
          observeGetChatRoomComponent,
          observeSearchChatLog,
@@ -34,6 +35,7 @@ window.getPubsub                         = getPubsub;
 window.getMessage                        = getMessage;
 window.getChatSettings                   = getChatSettings;
 window.getChatListPresentation           = getChatListPresentation;
+window.getChatBufferController           = getChatBufferController;
 window.observeSearchRoomSelector         = observeSearchRoomSelector;
 window.observeGetChatRoomComponent       = observeGetChatRoomComponent;
 window.observeSearchChatLog              = observeSearchChatLog;

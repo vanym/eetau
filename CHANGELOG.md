@@ -1,6 +1,9 @@
 # Changelog
 
 ## Unreleased
+### Added
+ - Chat history loader feature
+
 ### Fix
  - Stream up/down notifications stability
 

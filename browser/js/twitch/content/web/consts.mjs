@@ -38,6 +38,9 @@ export const DEFAULT_SETTINGS = {
             quality_up: 'Equal',
             quality_down: 'Minus'
         }
+    },
+    CHATLOG_FROM_VOD_SETTINGS: {
+        messages_amount: 12
     }
 }
 
@@ -52,7 +55,9 @@ export const DEFAULT_STORAGE = {
                     community_points_settings: {
                         auto_claim_bonus: false
                     },
-                    auto_leave_raids: false
+                    auto_leave_raids: false,
+                    chatlog_from_vod: true,
+                    chatlog_from_vod_settings: DEFAULT_SETTINGS.CHATLOG_FROM_VOD_SETTINGS
                 },
                 player: {
                     controls: true,

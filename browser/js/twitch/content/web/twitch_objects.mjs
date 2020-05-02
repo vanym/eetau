@@ -301,12 +301,25 @@ export function getChatListPresentation(ele=document){
     try{
         const node = searchReactChildren(
             getReactInstance(matchesQuery(ele, ROOM_SELECTOR)),
-            n => n && n.stateNode && n.stateNode.getMessages,
-            128
+            n => n && n.stateNode && n.stateNode.getMessages && n.stateNode.buffer,
+            256
         );
         chatList = node.stateNode;
     }catch(_){}
     return chatList;
+}
+
+export function getChatBufferController(ele=document){
+    let chatBuffer;
+    try{
+        const node = searchReactChildren(
+            getReactInstance(matchesQuery(ele, ROOM_SELECTOR)),
+            n => n && n.stateNode && n.stateNode.props && n.stateNode.props.messageBufferAPI,
+            256
+        );
+        chatBuffer = node.stateNode;
+    }catch(_){}
+    return chatBuffer;
 }
 
 export function observeSearchRoomSelector(callback, callbackLost=null, ele=document){
