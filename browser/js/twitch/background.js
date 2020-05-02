@@ -20,10 +20,11 @@ function getVideoMaxResolution(resolutions){
 }
 
 async function getTargetInfo(url, need_playable = true){
+    const CONSTS = await import('./content/web/consts.mjs');
     let url_info = parseUrl(url);
     let target_info = {};
     if(url_info.paths[0] == 'videos'){
-        let response = await fetch(TWITCH_KRAKEN + '/videos' + '/' + url_info.paths[1], TWITCH_FETCH_INIT);
+        let response = await fetch(CONSTS.TWITCH_KRAKEN + '/videos' + '/' + url_info.paths[1], CONSTS.TWITCH_FETCH_INIT);
         target_info.video = {};
         target_info.video.id = 'v' + url_info.paths[1];
         let time = url_info.searchParams.get('t');
@@ -51,7 +52,7 @@ async function getTargetInfo(url, need_playable = true){
             }
         }
         if(slug){
-            let response = await fetch(TWITCH_KRAKEN + '/clips/' + slug, TWITCH_FETCH_INIT);
+            let response = await fetch(CONSTS.TWITCH_KRAKEN + '/clips/' + slug, CONSTS.TWITCH_FETCH_INIT);
             if(response && response.status == 200){
                 let response_json = await response.json();
                 if(response_json){
@@ -69,7 +70,7 @@ async function getTargetInfo(url, need_playable = true){
     }else{
         target_info.channel_name = url_info.paths[0];
         if(need_playable){
-            let response = await fetch(TWITCH_KRAKEN + '/users' + '?login=' + target_info.channel_name, TWITCH_FETCH_INIT);
+            let response = await fetch(CONSTS.TWITCH_KRAKEN + '/users' + '?login=' + target_info.channel_name, CONSTS.TWITCH_FETCH_INIT);
             if(response && response.status == 200){
                 let response_json = await response.json();
                 if(response_json && response_json.users.length > 0){
@@ -77,7 +78,7 @@ async function getTargetInfo(url, need_playable = true){
                     target_info.channel_id = parseInt(user._id);
                 }
                 if(target_info.channel_id){
-                    let response = await fetch(TWITCH_KRAKEN + '/streams' + '/' + target_info.channel_id, TWITCH_FETCH_INIT);
+                    let response = await fetch(CONSTS.TWITCH_KRAKEN + '/streams' + '/' + target_info.channel_id, CONSTS.TWITCH_FETCH_INIT);
                     if(response && response.status == 200){
                         let response_json = await response.json();
                         if(response_json && response_json.stream){
@@ -86,7 +87,7 @@ async function getTargetInfo(url, need_playable = true){
                             target_info.stream.resolution.height = response_json.stream.video_height;
                             target_info.stream.resolution.width = response_json.stream.video_height * (16/9);
                             let stream_id = parseInt(response_json.stream._id);
-                            let response = await fetch(TWITCH_KRAKEN + '/channels' + '/' + target_info.channel_id + '/videos' + '?limit=4&broadcast_type=archive', TWITCH_FETCH_INIT);
+                            let response = await fetch(CONSTS.TWITCH_KRAKEN + '/channels' + '/' + target_info.channel_id + '/videos' + '?limit=4&broadcast_type=archive', CONSTS.TWITCH_FETCH_INIT);
                             if(response && response.status == 200){
                                 let response_json = await response.json();
                                 if(response_json){
@@ -241,33 +242,34 @@ async function onClicked(info, tab){
     }
 }
 
-function onInstalled(details){
+async function onInstalled(details){
+    const CONSTS = await import('./content/web/consts.mjs');
     browser.contextMenus.create({
         'id': 'popout-open',
         'title': 'Open Popout',
         'contexts': ['link'],
-        'targetUrlPatterns': [TWITCH_PATTERN]
+        'targetUrlPatterns': [CONSTS.TWITCH_PATTERN]
     });
     browser.contextMenus.create({
         'id': 'popout-open-player-chat',
         'title': 'Open Player Chat',
         'contexts': ['link'],
         'parentId': 'popout-open',
-        'targetUrlPatterns': [TWITCH_PATTERN]
+        'targetUrlPatterns': [CONSTS.TWITCH_PATTERN]
     });
     browser.contextMenus.create({
         'id': 'popout-open-player',
         'title': 'Open Player',
         'contexts': ['link'],
         'parentId': 'popout-open',
-        'targetUrlPatterns': [TWITCH_PATTERN]
+        'targetUrlPatterns': [CONSTS.TWITCH_PATTERN]
     });
     browser.contextMenus.create({
         'id': 'popout-open-chat',
         'title': 'Open Chat',
         'contexts': ['link'],
         'parentId': 'popout-open',
-        'targetUrlPatterns': [TWITCH_PATTERN]
+        'targetUrlPatterns': [CONSTS.TWITCH_PATTERN]
     });
 }
 

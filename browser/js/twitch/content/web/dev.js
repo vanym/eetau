@@ -12,9 +12,16 @@ import { getCurrentChat,
          getMessage,
          getChatSettings,
          getChatListPresentation,
+         getChatBufferController,
          observeSearchRoomSelector,
          observeGetChatRoomComponent,
-         observeSearchChatLog } from './twitch_objects.mjs';
+         observeSearchChatLog,
+         observeSearchPlayerRoot,
+         observeSearchMediaPlayerRoot,
+         observeSearchCommunityPointsSummary,
+         observeGetCommunityPointsSummaryClaimButton,
+         observeSearchRaidBanner,
+         waitGet } from './twitch_objects.mjs';
 
 window.getCurrentChat                    = getCurrentChat;
 window.sendChatMessage                   = sendChatMessage;
@@ -28,9 +35,16 @@ window.getPubsub                         = getPubsub;
 window.getMessage                        = getMessage;
 window.getChatSettings                   = getChatSettings;
 window.getChatListPresentation           = getChatListPresentation;
+window.getChatBufferController           = getChatBufferController;
 window.observeSearchRoomSelector         = observeSearchRoomSelector;
 window.observeGetChatRoomComponent       = observeGetChatRoomComponent;
 window.observeSearchChatLog              = observeSearchChatLog;
+window.observeSearchPlayerRoot           = observeSearchPlayerRoot;
+window.observeSearchMediaPlayerRoot      = observeSearchMediaPlayerRoot;
+window.observeSearchCommunityPointsSummary = observeSearchCommunityPointsSummary;
+window.observeGetCommunityPointsSummaryClaimButton = observeGetCommunityPointsSummaryClaimButton;
+window.observeSearchRaidBanner           = observeSearchRaidBanner;
+window.waitGet                           = waitGet;
 
 function getReactInstance(element){
     for(const key in element){

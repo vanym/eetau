@@ -24,6 +24,10 @@ function getTimeString(date){
     return formatDate(String(settings.timestamp_format), date);
 }
 
+function getTooltipTimeString(date){
+    return formatDate(String(settings.tooltip_timestamp_format), date);
+}
+
 function guard(ele, name){
     let g = '__' + EXTENSION_VAR_PREFIX + '_' + 'timestamps' + '_' + name;
     if(ele[g]){
@@ -52,6 +56,7 @@ function processLineNode(node){
         let span_text = document.createElement('span');
         span_text.classList.add(CLASS_CHAT_LINE_TIMESTAMP_SPAN_TEXT);
         span_text.textContent = getTimeString(date);
+        span_text.title = getTooltipTimeString(date);
         span.appendChild(span_text);
         let span_space = document.createElement('span');
         span_space.classList.add(CLASS_CHAT_LINE_TIMESTAMP_SPAN_INVISIBLE_SPACE);
