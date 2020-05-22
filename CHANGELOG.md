@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+### Added
+ - Seek ability to player controls
+
 ## 1.1.3 - 2020-05-02
 ### Added
  - Chat history loader feature

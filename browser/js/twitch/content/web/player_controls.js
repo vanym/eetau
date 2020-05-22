@@ -12,11 +12,6 @@ const CLASS_PLAYER_CONTROLS = CONSTS.EXTENSION_CLASS_PREFIX + '-player-controls'
 const CLASS_PLAYER_CONTROLS_SCRIPT = CLASS_PLAYER_CONTROLS + '-script';
 const VAR_PREFIX = '__' + CONSTS.EXTENSION_VAR_PREFIX + '_' + 'player_controls' + '_';
 
-const VAR_NAMES = {
-    last_date_set_muted: VAR_PREFIX + 'last_date_set_muted',
-    last_date_set_playback_rate: VAR_PREFIX + 'last_date_set_playback_rate'
-};
-
 const SELECTORS = {
     player: {
         settings_menu: '.pl-menu',
@@ -84,6 +79,14 @@ function changeSpeed(player, step_offset){
     let i = findClosestIndex(rate, speed_templates);
     let next = speed_templates[i + step_offset];
     player.setPlaybackRate(next || rate);
+}
+
+function seekPlayer(player, interval){
+    player.setCurrentTime(player.getCurrentTime() + interval)
+}
+
+function seekMediaPlayer(player, interval){
+    player.seekTo(player.getPosition() + interval);
 }
 
 function toggleAdvancedSettings(ele, type, selectors){
@@ -211,6 +214,23 @@ function handleKeyboardEvent(e){
         }
         ++actions;
     }
+    let seek_interval = (e.shiftKey ? settings.seek_interval_with_shift : settings.seek_interval);
+    if(e.code == settings.keys.seek_forwards){
+        if(player){
+            seekPlayer(player, seek_interval);
+        }
+        if(media_player){
+            seekMediaPlayer(media_player, seek_interval);
+        }
+    }
+    if(e.code == settings.keys.seek_backwards){
+        if(player){
+            seekPlayer(player, -seek_interval);
+        }
+        if(media_player){
+            seekMediaPlayer(media_player, -seek_interval);
+        }
+    }
     if(e.code == settings.keys.theatre_toggle){
         if(player){
             player.setTheatre(!player.getTheatre());
@@ -321,27 +341,25 @@ function isDateNear(date){
     return ((now - date) < 50) ? true : false;
 }
 
+function patchPlayerFunction(player, func_name){
+    if(player[func_name] && !guard(player, func_name + '_patched')){
+        const guard_field = VAR_PREFIX + 'last_date_' + func_name;
+        let originalFunc = player[func_name];
+        player[func_name] = function(...args){
+            if(isDateNear(this[guard_field])){
+                return;
+            }
+            this[guard_field] = new Date();
+            return originalFunc.bind(this)(...args);
+        }
+    }
+}
+
 function patchPlayerSetters(player){
-    if(!guard(player, 'muted_setter_patched')){
-        let originalSetMuted = player.setMuted;
-        player.setMuted = function(...args){
-            if(isDateNear(this[VAR_NAMES.last_date_set_muted])){
-                return;
-            }
-            this[VAR_NAMES.last_date_set_muted] = new Date();
-            return originalSetMuted.bind(this)(...args);
-        }
-    }
-    if(!guard(player, 'playback_rate_setter_patched')){
-        let originalSetPlaybackRate = player.setPlaybackRate;
-        player.setPlaybackRate = function(...args){
-            if(isDateNear(this[VAR_NAMES.last_date_set_playback_rate])){
-                return;
-            }
-            this[VAR_NAMES.last_date_set_playback_rate] = new Date();
-            return originalSetPlaybackRate.bind(this)(...args);
-        }
-    }
+    patchPlayerFunction(player, "setMuted");
+    patchPlayerFunction(player, "setPlaybackRate");
+    patchPlayerFunction(player, "seekTo");
+    patchPlayerFunction(player, "setCurrentTime");
 }
 
 async function processPlayerRoot(ele){
