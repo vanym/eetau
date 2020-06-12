@@ -1,8 +1,7 @@
 'use strict'; 
 
 import * as CONSTS from './consts.mjs';
-import { getCurrentPlayer,
-         getCurrentMediaPlayer,
+import { getCurrentMediaPlayer,
          matchesQuery,
          observeSearchPlayerRoot,
          observeSearchMediaPlayerRoot } from './twitch_objects.mjs';
@@ -12,21 +11,7 @@ const CLASS_PLAYER_CONTROLS = CONSTS.EXTENSION_CLASS_PREFIX + '-player-controls'
 const CLASS_PLAYER_CONTROLS_SCRIPT = CLASS_PLAYER_CONTROLS + '-script';
 const VAR_PREFIX = '__' + CONSTS.EXTENSION_VAR_PREFIX + '_' + 'player_controls' + '_';
 
-const VAR_NAMES = {
-    last_date_set_muted: VAR_PREFIX + 'last_date_set_muted',
-    last_date_set_playback_rate: VAR_PREFIX + 'last_date_set_playback_rate'
-};
-
 const SELECTORS = {
-    player: {
-        settings_menu: '.pl-menu',
-        settings_icon: '.pl-settings-icon',
-        settings_menu_advanced: '.qa-advanced-button',
-        settings_menu_advanced_ad_stats: '.qa-show-ad-stats-button > .pl-toggle > label',
-        settings_menu_advanced_video_stats: '.qa-show-stats-button > .pl-toggle > label',
-        settings_menu_advanced_latency_mode: '.qa-latency-mode-toggle  > .pl-toggle > label',
-        settings_menu_quality_button: '.qa-quality-button'
-    },
     media_player: {
         settings_menu: '*[data-a-target="player-settings-menu"]',
         settings_icon: 'button[data-a-target="player-settings-button"]',
@@ -86,6 +71,10 @@ function changeSpeed(player, step_offset){
     player.setPlaybackRate(next || rate);
 }
 
+function seekMediaPlayer(player, interval){
+    player.seekTo(player.getPosition() + interval);
+}
+
 function toggleAdvancedSettings(ele, type, selectors){
     let menu = ele.querySelector(selectors.settings_menu);
     let si = ele.querySelector(selectors.settings_icon);
@@ -108,35 +97,6 @@ function toggleAdvancedSettings(ele, type, selectors){
     siab.click();
     })();
     si.click();
-}
-
-function changeQualityPlayer(ele, up){
-    let menu = ele.querySelector(SELECTORS.player.settings_menu);
-    let si = ele.querySelector(SELECTORS.player.settings_icon);
-    if(!si){return;}
-    if(menu != null){si.click();}
-    si.click();
-    (function(){
-    let siq = ele.querySelector(SELECTORS.player.settings_menu_quality_button);
-    if(!siq){return;}
-    siq.click();
-    let siqms = ele.querySelector('.pl-menu__section');
-    if(!siqms){return;}
-    let siqmia = ele.querySelector('.pl-menu__item--active');
-    if(!siqmia){return;}
-    let siqmias;
-    if(up){
-        siqmias = siqmia.previousSibling;
-    }else{
-        siqmias = siqmia.nextSibling;
-    }
-    if(!siqmias){return;}
-    let siqmiasb = siqmias.querySelector('button');
-    if(!siqmiasb){return;}
-    siqmiasb.click();
-    })();
-    menu = ele.querySelector(SELECTORS.player.settings_menu);
-    if(menu != null){si.click();}
 }
 
 function changeQualityMediaPlayer(ele, up){
@@ -171,94 +131,82 @@ function changeQualityTemp(player, up){
 }
 
 function getMediaPlayerRoot(media_player){
-    return matchesQuery(media_player.mediaSinkManager.video, '.persistent-player', true);
+    let video = media_player &&
+                media_player.core &&
+                media_player.core.mediaSinkManager &&
+                media_player.core.mediaSinkManager.video;
+    let node = video;
+    while(node){
+        let child = matchesQuery(video, '.video-player', true);
+        if(child){
+            return child;
+        }
+        node = node.parentElement;
+    }
 }
 
 function handleKeyboardEvent(e){
-    let player_root = getCurrentPlayer(e.target);
     let media_player_root = getCurrentMediaPlayer(e.target);
-    if(!(player_root || media_player_root)){return;}
-    let player = player_root && player_root.props.player;
+    if(!(media_player_root)){return;}
     let media_player = media_player_root && media_player_root.props.mediaPlayerInstance;
     let actions = 0;
     if(e.code == settings.keys.fullscreen_toggle){
-        if(player){
-            player.setFullscreen(!player.getFullscreen());
-        }
-        if(media_player){
-            let root = getMediaPlayerRoot(media_player);
-            if(root){
-                let fullscreen_button = root.querySelector('button[data-a-target="player-fullscreen-button"]');
-                if(fullscreen_button){
-                    fullscreen_button.click();
-                }
+        let root = getMediaPlayerRoot(media_player);
+        if(root){
+            let fullscreen_button = root.querySelector('button[data-a-target="player-fullscreen-button"]');
+            if(fullscreen_button){
+                fullscreen_button.click();
             }
         }
         ++actions;
     }
     if(e.code == settings.keys.mute_toggle){
-        let isMuted = (player && player.getMuted) || (media_player && media_player.isMuted);
-        let any_player = (player || media_player);
-        any_player.setMuted(!isMuted.bind(any_player)());
+        media_player.setMuted(!media_player.isMuted());
         ++actions;
     }
     if(e.code == settings.keys.pause_toggle){
-        let pl = (player || media_player);
-        if(pl.isPaused()){
-            pl.play();
+        if(media_player.isPaused()){
+            media_player.play();
         }else{
-            pl.pause();
+            media_player.pause();
         }
         ++actions;
     }
+    let seek_interval = (e.shiftKey ? settings.seek_interval_with_shift : settings.seek_interval);
+    if(e.code == settings.keys.seek_forwards){
+        seekMediaPlayer(media_player, seek_interval);
+    }
+    if(e.code == settings.keys.seek_backwards){
+        seekMediaPlayer(media_player, -seek_interval);
+    }
     if(e.code == settings.keys.theatre_toggle){
-        if(player){
-            player.setTheatre(!player.getTheatre());
-        }
-        if(media_player){
-            let root = getMediaPlayerRoot(media_player);
-            if(root){
-                let theatre_mode_button = root.querySelector('button[data-a-target="player-theatre-mode-button"]');
-                if(theatre_mode_button){
-                    theatre_mode_button.click();
-                }
+        let root = getMediaPlayerRoot(media_player);
+        if(root){
+            let theatre_mode_button = root.querySelector('button[data-a-target="player-theatre-mode-button"]');
+            if(theatre_mode_button){
+                theatre_mode_button.click();
             }
         }
         ++actions;
     }
     if(e.code == settings.keys.ad_stats){
-        if(player_root){
-            toggleAdvancedSettings(player_root.props.root, 'ad_stats', SELECTORS.player);
-        }
-        if(media_player){
-            let root = getMediaPlayerRoot(media_player);
-            if(root){
-                toggleAdvancedSettings(root, 'ad_stats', SELECTORS.media_player);
-            }
+        let root = getMediaPlayerRoot(media_player);
+        if(root){
+            toggleAdvancedSettings(root, 'ad_stats', SELECTORS.media_player);
         }
         ++actions;
     }
     if(e.code == settings.keys.video_stats){
-        if(player_root){
-            toggleAdvancedSettings(player_root.props.root, 'video_stats', SELECTORS.player);
-        }
-        if(media_player){
-            let root = getMediaPlayerRoot(media_player);
-            if(root){
-                toggleAdvancedSettings(root, 'video_stats', SELECTORS.media_player);
-            }
+        let root = getMediaPlayerRoot(media_player);
+        if(root){
+            toggleAdvancedSettings(root, 'video_stats', SELECTORS.media_player);
         }
         ++actions;
     }
     if(e.code == settings.keys.latency_mode){
-        if(player_root){
-            toggleAdvancedSettings(player_root.props.root, 'latency_mode', SELECTORS.player);
-        }
-        if(media_player){
-            let root = getMediaPlayerRoot(media_player);
-            if(root){
-                toggleAdvancedSettings(root, 'latency_mode', SELECTORS.media_player);
-            }
+        let root = getMediaPlayerRoot(media_player);
+        if(root){
+            toggleAdvancedSettings(root, 'latency_mode', SELECTORS.media_player);
         }
         ++actions;
     }
@@ -279,41 +227,27 @@ function handleKeyboardEvent(e){
         ++actions;
     }
     if(e.code == settings.keys.speed_up){
-        changeSpeed(player || media_player, 1);
+        changeSpeed(media_player, 1);
         ++actions;
     }
     if(e.code == settings.keys.speed_down){
-        changeSpeed(player || media_player, -1);
+        changeSpeed(media_player, -1);
         ++actions;
     }
     if(e.code == settings.keys.quality_up){
-        if(player_root){
-            changeQualityPlayer(player_root.props.root, true);
-        }
-        if(media_player){
-            let root = getMediaPlayerRoot(media_player);
-            if(root){
-                changeQualityMediaPlayer(root, true);
-            }
+        let root = getMediaPlayerRoot(media_player);
+        if(root){
+            changeQualityMediaPlayer(root, true);
         }
         ++actions;
     }
     if(e.code == settings.keys.quality_down){
-        if(player_root){
-            changeQualityPlayer(player_root.props.root, false);
-        }
-        if(media_player){
-            let root = getMediaPlayerRoot(media_player);
-            if(root){
-                changeQualityMediaPlayer(root, false);
-            }
+        let root = getMediaPlayerRoot(media_player);
+        if(root){
+            changeQualityMediaPlayer(root, false);
         }
         ++actions;
     }
-}
-
-function isPopout(player_root){
-    return player_root.props.options.player == 'popout' || player_root.props.options.player == 'clips-embed';
 }
 
 function isDateNear(date){
@@ -321,38 +255,24 @@ function isDateNear(date){
     return ((now - date) < 50) ? true : false;
 }
 
-function patchPlayerSetters(player){
-    if(!guard(player, 'muted_setter_patched')){
-        let originalSetMuted = player.setMuted;
-        player.setMuted = function(...args){
-            if(isDateNear(this[VAR_NAMES.last_date_set_muted])){
+function patchPlayerFunction(player, func_name){
+    if(player[func_name] && !guard(player, func_name + '_patched')){
+        const guard_field = VAR_PREFIX + 'last_date_' + func_name;
+        let originalFunc = player[func_name];
+        player[func_name] = function(...args){
+            if(isDateNear(this[guard_field])){
                 return;
             }
-            this[VAR_NAMES.last_date_set_muted] = new Date();
-            return originalSetMuted.bind(this)(...args);
-        }
-    }
-    if(!guard(player, 'playback_rate_setter_patched')){
-        let originalSetPlaybackRate = player.setPlaybackRate;
-        player.setPlaybackRate = function(...args){
-            if(isDateNear(this[VAR_NAMES.last_date_set_playback_rate])){
-                return;
-            }
-            this[VAR_NAMES.last_date_set_playback_rate] = new Date();
-            return originalSetPlaybackRate.bind(this)(...args);
+            this[guard_field] = new Date();
+            return originalFunc.bind(this)(...args);
         }
     }
 }
 
-async function processPlayerRoot(ele){
-    await new Promise(r => setTimeout(r, CONSTS.INSIDES_LOAD_TIMEOUT));
-    let player_root = getCurrentPlayer(ele);
-    let player = player_root && player_root.props.player;
-    if(player){
-        if(settings.prevent_conflicts){
-            patchPlayerSetters(player);
-        }
-    }
+function patchPlayerSetters(player){
+    patchPlayerFunction(player, "setMuted");
+    patchPlayerFunction(player, "setPlaybackRate");
+    patchPlayerFunction(player, "seekTo");
 }
 
 async function processMediaPlayerRoot(ele){
@@ -361,14 +281,13 @@ async function processMediaPlayerRoot(ele){
     let media_player = media_player_root && media_player_root.props.mediaPlayerInstance;
     if(media_player){
         if(settings.prevent_conflicts){
-            patchPlayerSetters(media_player);
+            patchPlayerSetters(media_player.__proto__);
         }
     }
 }
 
 function setup(){
     document.addEventListener('keydown', handleKeyboardEvent);
-    observeSearchPlayerRoot(processPlayerRoot);
     observeSearchMediaPlayerRoot(processMediaPlayerRoot);
 }
 

@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.1.4 - 2020-06-12
+### Added
+ - Seek ability to player controls
+
+### Fix
+ - Add parent param to player popout
+ - Update player controls
+
 ## 1.1.3 - 2020-05-02
 ### Added
  - Chat history loader feature

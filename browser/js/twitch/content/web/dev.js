@@ -6,7 +6,6 @@ import { getCurrentChat,
          getChatControllerFromRoomSelector,
          sendNotifyMessage,
          sendChatAdminMessage,
-         getCurrentPlayer,
          getCurrentMediaPlayer,
          getPubsub,
          getMessage,
@@ -29,7 +28,6 @@ window.getChatController                 = getChatController;
 window.getChatControllerFromRoomSelector = getChatControllerFromRoomSelector;
 window.sendNotifyMessage                 = sendNotifyMessage;
 window.sendChatAdminMessage              = sendChatAdminMessage;
-window.getCurrentPlayer                  = getCurrentPlayer;
 window.getCurrentMediaPlayer             = getCurrentMediaPlayer;
 window.getPubsub                         = getPubsub;
 window.getMessage                        = getMessage;

@@ -25,6 +25,9 @@
             .settings_div_popout > input[type="number"] {
                 width:70px;
             }
+            .settings_input_seek_interval {
+                width:60px;
+            }
             .general-button {
                 width:100px;
                 height:30px;
@@ -189,6 +192,26 @@
                                                 <td><span>Pause toggle: </span></td>
                                                 <td><button path="sync.settings.twitch.player.controls_settings.keys.pause_toggle" class="setting" type="keybind">&lt;none&gt;</button></td>
                                                 <td><button path="sync.settings.twitch.player.controls_settings.keys.pause_toggle" class="small-reset-button" type="button">R</button></td>
+                                            </tr>
+                                            <tr>
+                                                <td><span>Seek forwards: </span></td>
+                                                <td><button path="sync.settings.twitch.player.controls_settings.keys.seek_forwards" class="setting" type="keybind">&lt;none&gt;</button></td>
+                                                <td><button path="sync.settings.twitch.player.controls_settings.keys.seek_forwards" class="small-reset-button" type="button">R</button></td>
+                                            </tr>
+                                            <tr>
+                                                <td><span>Seek backwards: </span></td>
+                                                <td><button path="sync.settings.twitch.player.controls_settings.keys.seek_backwards" class="setting" type="keybind">&lt;none&gt;</button></td>
+                                                <td><button path="sync.settings.twitch.player.controls_settings.keys.seek_backwards" class="small-reset-button" type="button">R</button></td>
+                                            </tr>
+                                            <tr>
+                                                <td><span>Seek interval (sec): </span></td>
+                                                <td><input path="sync.settings.twitch.player.controls_settings.seek_interval" class="setting settings_input_seek_interval" type="number"></input></td>
+                                                <td><button path="sync.settings.twitch.player.controls_settings.seek_interval" class="small-reset-button" type="button">R</button></td>
+                                            </tr>
+                                            <tr>
+                                                <td><span>Seek interval with shift: </span></td>
+                                                <td><input path="sync.settings.twitch.player.controls_settings.seek_interval_with_shift" class="setting settings_input_seek_interval" type="number"></input></td>
+                                                <td><button path="sync.settings.twitch.player.controls_settings.seek_interval_with_shift" class="small-reset-button" type="button">R</button></td>
                                             </tr>
                                             <tr>
                                                 <td><span>Theatre toggle: </span></td>
