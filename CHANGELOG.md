@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 1.1.4 - 2020-06-12
 ### Added
  - Seek ability to player controls
 
