@@ -8,8 +8,6 @@ const CHAT_CONTAINER = 'section[data-test-selector="chat-room-component-layout"]
 const ROOM_SELECTOR = '.stream-chat';
 const VOD_CHAT_CONTAINER = '.qa-vod-chat';
 const CHAT_LIST = '.chat-list';
-const PLAYER = '.player';
-const PLAYER_ROOT = '.player-root';
 const MEDIA_PLAYER_ROOT = '.video-player';
 const CLIPS_BROADCASTER_INFO = '.clips-broadcaster-info';
 const TWITCH_LOG_SELECTOR = 'div[role="log"]';
@@ -236,18 +234,6 @@ export function sendNotifyMessage(body, chatController=getChatController()){
 export function sendChatAdminMessage(body, ele=document){
     const chatController = getChatController(ele);
     sendNotifyMessage(body, chatController);
-}
-
-export function getCurrentPlayer(ele=document){
-    let player;
-    try{
-        const node = searchReactParents(
-            getReactInstance(matchesQuery(ele, PLAYER_ROOT, true)),
-            n => n.stateNode && n.stateNode.props && n.stateNode.props.player
-        );
-        player = node.stateNode;
-    }catch(_){}
-    return player;
 }
 
 export function getCurrentMediaPlayer(ele=document){
