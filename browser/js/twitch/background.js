@@ -137,6 +137,7 @@ async function openPlayer(target_info){
     const CONSTS = await import('./content/web/consts.mjs');
     let stor = (await new Promise(r => storage.local.get(CONSTS.DEFAULT_STORAGE.LOCAL, r)));
     let url = new URL('https://player.twitch.tv/');
+    url.searchParams.append('parent', 'twitch.tv');
     if(stor.settings.twitch.popout_player.apply_volume){
         url.searchParams.append('volume', String(stor.settings.twitch.popout_player.volume));
     }
