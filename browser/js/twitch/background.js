@@ -111,26 +111,42 @@ async function getTargetInfo(url, need_playable = true){
     return target_info;
 }
 
+function createWindow(create_data, popout_using_windows_api=true){
+    if(popout_using_windows_api){
+        browser.windows.create(create_data);
+    }else{
+        window.open(create_data.url, '_blank',
+                    'width='  + create_data.width + ',' +
+                    'height=' + create_data.height + ',' +
+                    (create_data.left !== undefined ? ('left=' + create_data.left + ',') : '') +
+                    (create_data.top  !== undefined ? ('top='  + create_data.top  + ',') : '') +
+                    'resizable=yes' + ',' +
+                    'scrollbars=no' + ',' +
+                    'toolbar=no' + ',' +
+                    'location=no' + ',' +
+                    'directories=no' + ',' +
+                    'status=no' + ',' +
+                    'menubar=no' + ',' +
+                    'titlebar=no' + ',' +
+                    'copyhistory=no');
+    }
+}
+
 async function openChat(channel_name){
     const CONSTS = await import('./content/web/consts.mjs');
     let stor = (await new Promise(r => storage.local.get(CONSTS.DEFAULT_STORAGE.LOCAL, r)));
     let popout_chat = stor.settings.twitch.popout_chat;
-    window.open('https://www.twitch.tv/popout/' + channel_name + '/chat?popout=', '_blank',
-                'width=' + popout_chat.window_size.width + ',' + 
-                'height=' + popout_chat.window_size.height + ',' + 
-                (popout_chat.apply_window_position ? (
-                'left=' + popout_chat.window_position.left + ',' + 
-                'top='  + popout_chat.window_position.top  + ',' + 
-                '') : '') + 
-                'resizable=yes' + ',' + 
-                'scrollbars=no' + ',' + 
-                'toolbar=no' + ',' + 
-                'location=no' + ',' + 
-                'directories=no' + ',' + 
-                'status=no' + ',' + 
-                'menubar=no' + ',' + 
-                'titlebar=no' + ',' + 
-                'copyhistory=no');
+    let create_data = {
+        url:  'https://www.twitch.tv/popout/' + channel_name + '/chat?popout=',
+        type: 'popup'
+    };
+    create_data.width  = popout_chat.window_size.width;
+    create_data.height = popout_chat.window_size.height;
+    if(popout_chat.apply_window_position){
+        create_data.left = popout_chat.window_position.left;
+        create_data.top  = popout_chat.window_position.top;
+    }
+    createWindow(create_data, stor.settings.twitch.popout_using_windows_api);
 }
 
 async function openPlayer(target_info){
@@ -171,22 +187,17 @@ async function openPlayer(target_info){
     hashParams.append('width', resolution.width);
     hashParams.append('height', resolution.height);
     url.hash = hashParams.toString();
-    window.open(url.toString(), '_blank',
-                'width='  + (resolution.width  + offset.x) + ',' + 
-                'height=' + (resolution.height + offset.y) + ',' + 
-                (stor.settings.twitch.popout_player.apply_window_position ? (
-                'left=' + stor.settings.twitch.popout_player.window_position.left + ',' + 
-                'top='  + stor.settings.twitch.popout_player.window_position.top  + ',' + 
-                '') : '') + 
-                'resizable=yes' + ',' + 
-                'scrollbars=no' + ',' + 
-                'toolbar=no' + ',' + 
-                'location=no' + ',' + 
-                'directories=no' + ',' + 
-                'status=no' + ',' + 
-                'menubar=no' + ',' + 
-                'titlebar=no' + ',' + 
-                'copyhistory=no');
+    let create_data = {
+        url:  url.toString(),
+        type: 'popup'
+    };
+    create_data.width  = (resolution.width  + offset.x);
+    create_data.height = (resolution.height + offset.y);
+    if(stor.settings.twitch.popout_player.apply_window_position){
+        create_data.left = stor.settings.twitch.popout_player.window_position.left;
+        create_data.top  = stor.settings.twitch.popout_player.window_position.top;
+    }
+    createWindow(create_data, stor.settings.twitch.popout_using_windows_api);
 }
 
 async function windowResizeViewport(width, height, tab){
