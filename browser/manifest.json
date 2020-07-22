@@ -39,5 +39,5 @@
             "run_at": "document_idle"
         }
     ],
-    "permissions": ["contextMenus", "storage", "tabs", "*://*.twitch.tv/*"]
+    "permissions": ["contextMenus", "storage", "*://*.twitch.tv/*"]
 }
