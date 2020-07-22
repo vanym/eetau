@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 1.1.5 - 2020-07-22
 ### Changed
  - Way popout windows opens
 
