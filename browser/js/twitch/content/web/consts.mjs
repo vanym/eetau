@@ -96,7 +96,8 @@ export const DEFAULT_STORAGE = {
                     window_size: {width: 400, height: 720},
                     apply_window_position: false,
                     window_position: {left: 0, top: 0}
-                }
+                },
+                popout_using_windows_api: true
             }
         },
         cache: {

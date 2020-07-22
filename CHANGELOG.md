@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.1.5 - 2020-07-22
+### Changed
+ - Way popout windows opens
+
 ## 1.1.4 - 2020-06-12
 ### Added
  - Seek ability to player controls
