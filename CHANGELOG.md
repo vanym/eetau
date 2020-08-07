@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.1.6 - 2020-08-07
+### Fix
+ - Timestamps to not create extra line
+
 ## 1.1.5 - 2020-07-22
 ### Changed
  - Way popout windows opens
