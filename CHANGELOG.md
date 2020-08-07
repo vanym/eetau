@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 1.1.6 - 2020-08-07
 ### Fix
  - Timestamps to not create extra line
 
