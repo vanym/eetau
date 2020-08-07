@@ -43,6 +43,7 @@ function processLineNode(node){
         return;
     }
     let mes = getMessage(node);
+    let inline_div = node.querySelector('.tw-inline') || node;
     if(mes){
         if(!mes.props.message.timestamp){
             mes.props.message.timestamp = Date.now();
@@ -62,7 +63,7 @@ function processLineNode(node){
         span_space.classList.add(CLASS_CHAT_LINE_TIMESTAMP_SPAN_INVISIBLE_SPACE);
         span_space.textContent = ' ';
         span.appendChild(span_space);
-        node.insertBefore(span, node.firstChild);
+        inline_div.insertBefore(span, inline_div.firstChild);
     }
 }
 
