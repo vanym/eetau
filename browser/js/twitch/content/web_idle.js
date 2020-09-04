@@ -48,6 +48,10 @@ async function injectScripts(){
         script.setAttribute('src', browser.extension.getURL(WEB_DIR + '/chatlog_from_vod.js'));
         document.head.appendChild(script);
     }
+    let always_reply = stor_sync.settings.twitch.chat.always_reply;
+    if(always_reply){
+        injectModuleScript(browser.extension.getURL(WEB_DIR + '/always_reply.js'));
+    }
     if(CONSTS.DEV_MODE){
         injectModuleScript(browser.extension.getURL(WEB_DIR + '/dev.js'));
     }

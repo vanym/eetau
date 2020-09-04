@@ -62,7 +62,8 @@ export const DEFAULT_STORAGE = {
                     },
                     auto_leave_raids: false,
                     chatlog_from_vod: true,
-                    chatlog_from_vod_settings: DEFAULT_SETTINGS.CHATLOG_FROM_VOD_SETTINGS
+                    chatlog_from_vod_settings: DEFAULT_SETTINGS.CHATLOG_FROM_VOD_SETTINGS,
+                    always_reply: true
                 },
                 player: {
                     controls: true,
