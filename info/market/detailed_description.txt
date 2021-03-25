@@ -13,3 +13,4 @@ Shows in chat "Stream up", "Stream down" notify.
 Auto claim community points bonus.
 Auto leave raids.
 Chat history loader.
+Force adding reply button.
