@@ -4,7 +4,7 @@ import { observeSearchRoomSelector,
          observeSearchRaidBanner } from './twitch_objects.mjs';
 
 function processRaidBanner(raidBanner){
-    let leaveButton = raidBanner.querySelector('button.tw-core-button--secondary');
+    let leaveButton = raidBanner.querySelector('button[class*="tw-core-button"]');
     if(leaveButton){
         leaveButton.click();
     }

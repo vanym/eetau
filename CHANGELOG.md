@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.1.7 - 2021-03-24
+### Added
+ - Option to force add reply button
+
+### Fix
+ - Leave button selector
+
 ## 1.1.6 - 2020-08-07
 ### Fix
  - Timestamps to not create extra line
