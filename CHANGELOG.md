@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 1.1.8 - 2021-05-18
 ### Fix
  - Timestamps to not create extra line
 
