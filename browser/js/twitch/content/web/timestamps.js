@@ -43,7 +43,12 @@ function processLineNode(node){
         return;
     }
     let mes = getMessage(node);
-    let inline_div = node.querySelector('.tw-inline') || node;
+    let inline_div = node.querySelector('.chat-line__no-background') ||
+                     node.querySelector('div > *[data-test-selector="chat-line-message-body"]')?.parentElement ||
+                     node.querySelector('div > *[data-test-selector="chat-message-separator"]')?.parentElement ||
+                     node.querySelector('div > .chat-line__username-container')?.parentElement ||
+                     node.querySelector('div > span')?.parentElement ||
+                     node;
     if(mes){
         if(!mes.props.message.timestamp){
             mes.props.message.timestamp = Date.now();

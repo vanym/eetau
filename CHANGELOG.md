@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+### Fix
+ - Timestamps to not create extra line
+
 ## 1.1.7 - 2021-03-24
 ### Added
  - Option to force add reply button
