@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 1.1.9 - 2021-06-03
 ### Fix
  - Leave button selector
 
