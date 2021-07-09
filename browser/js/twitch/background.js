@@ -254,9 +254,9 @@ async function onClicked(info, tab){
     }
 }
 
-async function onInstalled(details){
+async function createContextMenus(){
     const CONSTS = await import('./content/web/consts.mjs');
-    browser.contextMenus.create({
+    let root_menu_id = browser.contextMenus.create({
         'id': 'popout-open',
         'title': 'Open Popout',
         'contexts': ['link'],
@@ -266,23 +266,27 @@ async function onInstalled(details){
         'id': 'popout-open-player-chat',
         'title': 'Open Player Chat',
         'contexts': ['link'],
-        'parentId': 'popout-open',
+        'parentId': root_menu_id,
         'targetUrlPatterns': [CONSTS.TWITCH_PATTERN]
     });
     browser.contextMenus.create({
         'id': 'popout-open-player',
         'title': 'Open Player',
         'contexts': ['link'],
-        'parentId': 'popout-open',
+        'parentId': root_menu_id,
         'targetUrlPatterns': [CONSTS.TWITCH_PATTERN]
     });
     browser.contextMenus.create({
         'id': 'popout-open-chat',
         'title': 'Open Chat',
         'contexts': ['link'],
-        'parentId': 'popout-open',
+        'parentId': root_menu_id,
         'targetUrlPatterns': [CONSTS.TWITCH_PATTERN]
     });
+}
+
+async function onInstalled(details){
+    await createContextMenus();
 }
 
 browser.runtime.onInstalled.addListener(onInstalled);
