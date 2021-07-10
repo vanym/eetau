@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+### Changed
+ - Optimize chat history loader
+
 ## 1.1.9 - 2021-06-03
 ### Fix
  - Leave button selector

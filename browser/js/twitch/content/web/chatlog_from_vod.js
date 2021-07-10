@@ -36,18 +36,12 @@ function getMessageByComment(comment){
 }
 
 async function getStreamVideo(channel_id){
-    let promise_streams = fetch(CONSTS.TWITCH_KRAKEN + '/streams' + '/' + channel_id + '?stream_type=live', CONSTS.TWITCH_FETCH_INIT);
-    let promise_videos = fetch(CONSTS.TWITCH_KRAKEN + '/channels' + '/' + channel_id + '/videos' + '?limit=4&broadcast_type=archive', CONSTS.TWITCH_FETCH_INIT);
-    let response_streams = await promise_streams;
-    let response_videos = await promise_videos;
-    if(response_streams && response_streams.status == 200
-    && response_videos  && response_videos.status  == 200){
-        let response_streams_json = await response_streams.json();
+    let response_videos = await fetch(CONSTS.TWITCH_KRAKEN + '/channels' + '/' + channel_id + '/videos' + '?limit=4&broadcast_type=archive', CONSTS.TWITCH_FETCH_INIT);
+    if(response_videos  && response_videos.status  == 200){
         let response_videos_json = await response_videos.json();
-        if(response_streams_json && response_streams_json.stream && response_videos_json){
-            let stream_id = parseInt(response_streams_json.stream._id);
+        if(response_videos_json){
             for(let video of response_videos_json.videos){
-                if(video.broadcast_id == stream_id){
+                if(video.status == 'recording'){
                     return video;
                 }
             }
@@ -81,9 +75,7 @@ async function processChatController(chat, chatList){
         return;
     }
     let video_id = parseInt(video._id.substr(1));
-    let start_date = new Date(video.recorded_at);
-    let now_date = new Date();
-    let offset = Math.floor((now_date - start_date) / 1000);
+    let offset = video.length;
     let url = new URL('https://api.twitch.tv/v5/videos/' + video_id + '/comments');
     url.searchParams.set('content_offset_seconds', offset);
     for(let count = 0; count < settings.messages_amount;){
