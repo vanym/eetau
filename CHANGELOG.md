@@ -7,6 +7,7 @@
 ### Fix
  - Timestamps to work again
  - Reply button to appear
+ - Channel link head display
 
 ## 1.1.9 - 2021-06-03
 ### Fix

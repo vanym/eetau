@@ -21,9 +21,9 @@ async function titleChange(){
                 let rooms_header = document.querySelector('.stream-chat-header');
                 if(rooms_header){
                     let room_selector = rooms_header.firstChild;
-                    room_selector.classList.add('tw-absolute');
-                    room_selector.classList.add('tw-mg-l-1');
-                    room_selector.classList.add('tw-left-0');
+                    room_selector.style.position = 'absolute';
+                    room_selector.style.left = '0px';
+                    room_selector.style.marginLeft = '1rem';
                     let a = document.createElement('a');
                     a.id = 'channel-link';
                     a.href = CONSTS.TWITCH_LINK + '/' + channel_name;
@@ -32,7 +32,6 @@ async function titleChange(){
                     a.style.textDecoration = 'none';
                     a.style.color = '#322f37';
                     a.style.fontSize = '115%';
-                    a.classList.add('tw-align-items-center');
                     rooms_header.insertBefore(a, rooms_header.lastChild);
                 }else{
                     if(trys > 0){
