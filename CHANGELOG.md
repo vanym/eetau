@@ -4,6 +4,9 @@
 ### Changed
  - Optimize chat history loader
 
+### Fix
+ - Timestamps to work again
+
 ## 1.1.9 - 2021-06-03
 ### Fix
  - Leave button selector

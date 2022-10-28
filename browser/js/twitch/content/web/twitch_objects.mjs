@@ -197,7 +197,8 @@ export function getChatController(ele=document){
     try{
         const node = searchReactParents(
             getReactInstance(matchesQuery(ele, CHAT_CONTAINER)),
-            n => n.stateNode && n.stateNode.props && n.stateNode.props.messageHandlerAPI && n.stateNode.props.chatConnectionAPI
+            n => n.stateNode && n.stateNode.props && n.stateNode.props.messageHandlerAPI && n.stateNode.props.chatConnectionAPI,
+            32
         );
         chatContentComponent = node.stateNode;
     }catch(_){}
@@ -274,7 +275,7 @@ export function getChatSettings(ele=document){
     try{
         const node = searchReactChildren(
             getReactInstance(matchesQuery(ele, CHAT_CONTAINER)),
-            n => n.stateNode && n.stateNode.props && n.stateNode.props.onTimestampsEnable,
+            n => (n?.stateNode?.props?.showTimestamps !== undefined),
             96
         );
         chatSettings = node.stateNode;

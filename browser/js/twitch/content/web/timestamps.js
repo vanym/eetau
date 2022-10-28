@@ -127,7 +127,7 @@ let hideTimestamps = styleFunction.hide_timestamps;
 
 function addSettings(ele){
     let chat_settings = getChatSettings(ele);
-    if(chat_settings && chat_settings.onTimestampToggle){
+    if(chat_settings?.onTimestampToggle){
         if(guard(chat_settings, 'on_timestamp_toggle_patch')){
             return;
         }
@@ -137,6 +137,25 @@ function addSettings(ele){
             hideTimestamps(hide);
             return originalOnTimestampToggle.bind(this)(...args);
         }
+        hideTimestamps(!chat_settings.props.showTimestamps);
+    } else if(chat_settings?.props?.showTimestamps !== undefined){
+        if(guard(chat_settings, 'props_setter_patch')){
+            return;
+        }
+        chat_settings._props = chat_settings.props;
+        Object.defineProperty(chat_settings, "props", {
+            set: function(val){
+                this._props = val;
+                let hide = !val?.showTimestamps;
+                if(hide !== undefined){
+                    hideTimestamps(hide);
+                }
+                return this._props;
+            },
+            get: function(){
+                return this._props;
+            },
+        });
         hideTimestamps(!chat_settings.props.showTimestamps);
     }
 }
@@ -149,6 +168,9 @@ function messageHandler(mes){
 
 function addMessageHandler(ele){
     let chatController = getChatController(ele);
+    if(!chatController){
+        return;
+    }
     let api = chatController.props.messageHandlerAPI;
     if(guard(api, 'message_handler')){
         return;
