@@ -38,6 +38,60 @@ function guard(ele, name){
     }
 }
 
+function addStyle(){
+    let style = document.createElement('style');
+    style.classList.add(CLASS_CHAT_LINE_TIMESTAMP_STYLE);
+    document.head.appendChild(style);
+    style.sheet.insertRule(TWITCH_CHAT_LINE_TIMESTAMP_SELECTOR + '{display: none}');
+    style.sheet.insertRule('.' + CLASS_CHAT_LINE_TIMESTAMP_SPAN_INVISIBLE_SPACE + '{font-size: 0; line-height: 0;}');
+    if(settings.prevent_chat_badge_selection){
+        style.sheet.insertRule(TWITCH_CHAT_BADGE_SELECTOR + '{user-select: none}');
+    }
+    let staticRules = style.sheet.rules.length;
+    function styleHide(hide){
+        let haveHide = style.sheet.rules.length > staticRules;
+        if(hide){
+            if(!haveHide){
+                style.sheet.insertRule('.' + CLASS_CHAT_LINE_TIMESTAMP_SPAN + '{display: none}');
+            }
+        }else{
+            if(haveHide){
+                style.sheet.removeRule(0);
+            }
+        }
+    }
+    return {
+        hide_timestamps: styleHide
+    }
+}
+
+let styleControl = {
+    style: null,
+    hideTimestamps: function(hide){
+        if(this.style){
+            this.style.hide_timestamps(hide);
+        }else{
+            this.hide = hide;
+        }
+    },
+    initStyle: function(){
+        this.style = addStyle();
+        if(this.hide !== undefined){
+            this.style.hide_timestamps(this.hide);
+            this.hide = undefined;
+        }
+    },
+    inited: false,
+    processLineHook: function(){
+        if(!this.inited){
+            this.inited = true;
+            this.initStyle();
+        }
+    }
+};
+
+let hideTimestamps = styleControl.hideTimestamps.bind(styleControl);
+
 function processLineNode(node){
     if(node.querySelector('.' + CLASS_CHAT_LINE_TIMESTAMP_SPAN)){
         return;
@@ -53,6 +107,7 @@ function processLineNode(node){
         if(!mes.props.message.timestamp){
             mes.props.message.timestamp = Date.now();
         }
+        styleControl.processLineHook();
         let date = new Date(mes.props.message.timestamp);
         let span = document.createElement('span');
         span.classList.add(TWITCH_CLASS_CHAT_LINE_TIMESTAMP);
@@ -93,37 +148,6 @@ function processLogNode(log){
         processLogNodeChild(node);
     }
 }
-
-function addStyle(){
-    let style = document.createElement('style');
-    style.classList.add(CLASS_CHAT_LINE_TIMESTAMP_STYLE);
-    document.head.appendChild(style);
-    style.sheet.insertRule(TWITCH_CHAT_LINE_TIMESTAMP_SELECTOR + '{display: none}');
-    style.sheet.insertRule('.' + CLASS_CHAT_LINE_TIMESTAMP_SPAN_INVISIBLE_SPACE + '{font-size: 0; line-height: 0;}');
-    if(settings.prevent_chat_badge_selection){
-        style.sheet.insertRule(TWITCH_CHAT_BADGE_SELECTOR + '{user-select: none}');
-    }
-    let staticRules = style.sheet.rules.length;
-    function styleHide(hide){
-        let haveHide = style.sheet.rules.length > staticRules;
-        if(hide){
-            if(!haveHide){
-                style.sheet.insertRule('.' + CLASS_CHAT_LINE_TIMESTAMP_SPAN + '{display: none}');
-            }
-        }else{
-            if(haveHide){
-                style.sheet.removeRule(0);
-            }
-        }
-    }
-    return {
-        hide_timestamps: styleHide
-    }
-}
-
-let styleFunction = addStyle();
-
-let hideTimestamps = styleFunction.hide_timestamps;
 
 function addSettings(ele){
     let chat_settings = getChatSettings(ele);
