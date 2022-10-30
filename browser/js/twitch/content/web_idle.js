@@ -2,6 +2,9 @@
 
 async function injectScripts(){
     const CONSTS = await import('./web/consts.mjs');
+    if(CONSTS.DEV_MODE){
+        injectModuleScript(browser.extension.getURL(WEB_DIR + '/dev.js'));
+    }
     let stor_sync = (await new Promise(r => storage.sync.get(CONSTS.DEFAULT_STORAGE.SYNC, r)));
     let show_video_playback = stor_sync.settings.twitch.chat.show_video_playback;
     if(show_video_playback){
@@ -51,9 +54,6 @@ async function injectScripts(){
     let always_reply = stor_sync.settings.twitch.chat.always_reply;
     if(always_reply){
         injectModuleScript(browser.extension.getURL(WEB_DIR + '/always_reply.js'));
-    }
-    if(CONSTS.DEV_MODE){
-        injectModuleScript(browser.extension.getURL(WEB_DIR + '/dev.js'));
     }
 }
 
