@@ -55,7 +55,10 @@ function patchChatListPrependHistoricalMessages(chatList){
             }
         });
         let ret = originalPrependHistoricalMessages.bind(this)(...args);
-        Object.defineProperty(this, "buffer", {value: originalBuffer});
+        Object.defineProperty(this, "buffer", {
+            value: originalBuffer,
+            writable: true
+        });
         return ret;
     }
 }
