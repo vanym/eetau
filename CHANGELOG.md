@@ -4,6 +4,9 @@
 ### Changed
  - Chat history loader now use chat history endpoint
 
+### Removed
+ - Popout player to be video sized on opening
+
 ### Fix
  - Timestamps to work again
  - Reply button to appear
