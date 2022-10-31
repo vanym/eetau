@@ -2,7 +2,7 @@
 
 ## Unreleased
 ### Changed
- - Optimize chat history loader
+ - Chat history loader now use chat history endpoint
 
 ### Fix
  - Timestamps to work again
