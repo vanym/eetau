@@ -24,6 +24,19 @@ function getReactInstance(element){
     return null;
 }
 
+function getReactCurrentRoot(element=document.querySelector('#root')){
+    for(const key in element){
+        if(key.startsWith('_reactRootContainer')){
+            let container = element[key];
+            let cur = container?._internalRoot?.current;
+            if(cur !== undefined){
+                return cur;
+            }
+        }
+    }
+    return null;
+}
+
 function searchReactParents(node, predicate, maxDepth = 15, depth = 0){
     try{
         if(predicate(node)){
@@ -197,7 +210,8 @@ export function getChatController(ele=document){
     try{
         const node = searchReactParents(
             getReactInstance(matchesQuery(ele, CHAT_CONTAINER)),
-            n => n.stateNode && n.stateNode.props && n.stateNode.props.messageHandlerAPI && n.stateNode.props.chatConnectionAPI
+            n => n.stateNode && n.stateNode.props && n.stateNode.props.messageHandlerAPI && n.stateNode.props.chatConnectionAPI,
+            32
         );
         chatContentComponent = node.stateNode;
     }catch(_){}
@@ -274,7 +288,7 @@ export function getChatSettings(ele=document){
     try{
         const node = searchReactChildren(
             getReactInstance(matchesQuery(ele, CHAT_CONTAINER)),
-            n => n.stateNode && n.stateNode.props && n.stateNode.props.onTimestampsEnable,
+            n => (n?.stateNode?.props?.showTimestamps !== undefined),
             96
         );
         chatSettings = node.stateNode;
@@ -287,7 +301,8 @@ export function getChatListPresentation(ele=document){
     try{
         const node = searchReactChildren(
             getReactInstance(matchesQuery(ele, ROOM_SELECTOR)),
-            n => n && n.stateNode && n.stateNode.getMessages && n.stateNode.buffer,
+            n => n && n.stateNode && n.stateNode.getMessages &&
+            n.stateNode.buffer && n.stateNode.prependHistoricalMessages,
             256
         );
         chatList = node.stateNode;
@@ -306,6 +321,47 @@ export function getChatBufferController(ele=document){
         chatBuffer = node.stateNode;
     }catch(_){}
     return chatBuffer;
+}
+
+export function getApolloClient(){
+    let client;
+    try{
+        const node = searchReactChildren(
+            getReactCurrentRoot(),
+            n => n.pendingProps?.value?.client
+        );
+        client = node.pendingProps.value.client;
+    }catch(_){}
+    return client;
+}
+
+export function getGqlQueryMessageBufferChatHistory(ele=document){
+    let query;
+    try{
+        const node = searchReactChildren(
+            getReactInstance(matchesQuery(ele, ROOM_SELECTOR)),
+            n => n?.pendingProps?.query?.MessageBufferChatHistory,
+            256
+        );
+        query = node.pendingProps.query.MessageBufferChatHistory;
+    }catch(_){}
+    return query;
+}
+
+export function getGqlQueryMessageBufferChatHistoryRenderer(ele=document){
+    let renderer;
+    try{
+        const node = searchReactChildren(
+            getReactInstance(matchesQuery(ele, ROOM_SELECTOR)),
+            n => n.stateNode && n.stateNode.setWrappedInstance &&
+            n.stateNode.props && n.stateNode.props.channelLogin &&
+            (n.stateNode.props.isLoggedIn !== undefined) &&
+            n.stateNode.props.data,
+            256
+        );
+        renderer = node.stateNode;
+    }catch(_){}
+    return renderer;
 }
 
 export function observeSearchRoomSelector(callback, callbackLost=null, ele=document){

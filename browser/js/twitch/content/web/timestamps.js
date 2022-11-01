@@ -38,62 +38,6 @@ function guard(ele, name){
     }
 }
 
-function processLineNode(node){
-    if(node.querySelector('.' + CLASS_CHAT_LINE_TIMESTAMP_SPAN)){
-        return;
-    }
-    let mes = getMessage(node);
-    let inline_div = node.querySelector('.chat-line__no-background') ||
-                     node.querySelector('div > *[data-test-selector="chat-line-message-body"]')?.parentElement ||
-                     node.querySelector('div > *[data-test-selector="chat-message-separator"]')?.parentElement ||
-                     node.querySelector('div > .chat-line__username-container')?.parentElement ||
-                     node.querySelector('div > span')?.parentElement ||
-                     node;
-    if(mes){
-        if(!mes.props.message.timestamp){
-            mes.props.message.timestamp = Date.now();
-        }
-        let date = new Date(mes.props.message.timestamp);
-        let span = document.createElement('span');
-        span.classList.add(TWITCH_CLASS_CHAT_LINE_TIMESTAMP);
-        span.classList.add(CLASS_CHAT_LINE_TIMESTAMP_SPAN);
-        span.setAttribute('iso', date.toISOString());
-        span.setAttribute('unix', date.getTime());
-        let span_text = document.createElement('span');
-        span_text.classList.add(CLASS_CHAT_LINE_TIMESTAMP_SPAN_TEXT);
-        span_text.textContent = getTimeString(date);
-        span_text.title = getTooltipTimeString(date);
-        span.appendChild(span_text);
-        let span_space = document.createElement('span');
-        span_space.classList.add(CLASS_CHAT_LINE_TIMESTAMP_SPAN_INVISIBLE_SPACE);
-        span_space.textContent = ' ';
-        span.appendChild(span_space);
-        inline_div.insertBefore(span, inline_div.firstChild);
-    }
-}
-
-function processLogNodeChild(node){
-    let ele = matchesQuery(node, 'div[class*="chat-line"]');
-    if(ele){
-        processLineNode(ele);
-    }
-}
-
-function processLogNode(log){
-    if(guard(log, 'log_observed')){
-        return;
-    }
-    let observer = new window.MutationObserver(mutations => mutations.forEach(mutation => {
-        for(let node of mutation.addedNodes){
-            processLogNodeChild(node);
-        }
-    }));
-    observer.observe(log, {childList: true, subtree: false});
-    for(let node of log.childNodes){
-        processLogNodeChild(node);
-    }
-}
-
 function addStyle(){
     let style = document.createElement('style');
     style.classList.add(CLASS_CHAT_LINE_TIMESTAMP_STYLE);
@@ -121,13 +65,95 @@ function addStyle(){
     }
 }
 
-let styleFunction = addStyle();
+let styleControl = {
+    style: null,
+    hideTimestamps: function(hide){
+        if(this.style){
+            this.style.hide_timestamps(hide);
+        }else{
+            this.hide = hide;
+        }
+    },
+    initStyle: function(){
+        this.style = addStyle();
+        if(this.hide !== undefined){
+            this.style.hide_timestamps(this.hide);
+            this.hide = undefined;
+        }
+    },
+    inited: false,
+    processLineHook: function(){
+        if(!this.inited){
+            this.inited = true;
+            this.initStyle();
+        }
+    }
+};
 
-let hideTimestamps = styleFunction.hide_timestamps;
+let hideTimestamps = styleControl.hideTimestamps.bind(styleControl);
+
+function processLineNode(node){
+    if(node.querySelector('.' + CLASS_CHAT_LINE_TIMESTAMP_SPAN)){
+        return;
+    }
+    let mes = getMessage(node);
+    let inline_div = node.querySelector('.chat-line__no-background') ||
+                     node.querySelector('div > *[data-test-selector="chat-line-message-body"]')?.parentElement ||
+                     node.querySelector('div > *[data-test-selector="chat-message-separator"]')?.parentElement ||
+                     node.querySelector('div > .chat-line__username-container')?.parentElement ||
+                     node.querySelector('div > span')?.parentElement ||
+                     node;
+    if(mes){
+        if(!mes.props.message.timestamp){
+            mes.props.message.timestamp = Date.now();
+        }
+        styleControl.processLineHook();
+        let date = new Date(mes.props.message.timestamp);
+        let span = document.createElement('span');
+        span.classList.add(TWITCH_CLASS_CHAT_LINE_TIMESTAMP);
+        span.classList.add(CLASS_CHAT_LINE_TIMESTAMP_SPAN);
+        span.setAttribute('iso', date.toISOString());
+        span.setAttribute('unix', date.getTime());
+        let span_text = document.createElement('span');
+        span_text.classList.add(CLASS_CHAT_LINE_TIMESTAMP_SPAN_TEXT);
+        span_text.textContent = getTimeString(date);
+        span_text.title = getTooltipTimeString(date);
+        span.appendChild(span_text);
+        let span_space = document.createElement('span');
+        span_space.classList.add(CLASS_CHAT_LINE_TIMESTAMP_SPAN_INVISIBLE_SPACE);
+        span_space.textContent = ' ';
+        span.appendChild(span_space);
+        let original_timestamp =
+            inline_div.querySelector('.' + TWITCH_CLASS_CHAT_LINE_TIMESTAMP) || inline_div.firstChild;
+        inline_div.insertBefore(span, original_timestamp);
+    }
+}
+
+function processLogNodeChild(node){
+    let ele = matchesQuery(node, 'div[class*="chat-line"]');
+    if(ele){
+        processLineNode(ele);
+    }
+}
+
+function processLogNode(log){
+    if(guard(log, 'log_observed')){
+        return;
+    }
+    let observer = new window.MutationObserver(mutations => mutations.forEach(mutation => {
+        for(let node of mutation.addedNodes){
+            processLogNodeChild(node);
+        }
+    }));
+    observer.observe(log, {childList: true, subtree: false});
+    for(let node of log.childNodes){
+        processLogNodeChild(node);
+    }
+}
 
 function addSettings(ele){
     let chat_settings = getChatSettings(ele);
-    if(chat_settings && chat_settings.onTimestampToggle){
+    if(chat_settings?.onTimestampToggle){
         if(guard(chat_settings, 'on_timestamp_toggle_patch')){
             return;
         }
@@ -137,6 +163,25 @@ function addSettings(ele){
             hideTimestamps(hide);
             return originalOnTimestampToggle.bind(this)(...args);
         }
+        hideTimestamps(!chat_settings.props.showTimestamps);
+    } else if(chat_settings?.props?.showTimestamps !== undefined){
+        if(guard(chat_settings, 'props_setter_patch')){
+            return;
+        }
+        chat_settings._props = chat_settings.props;
+        Object.defineProperty(chat_settings, "props", {
+            set: function(val){
+                this._props = val;
+                let hide = !val?.showTimestamps;
+                if(hide !== undefined){
+                    hideTimestamps(hide);
+                }
+                return this._props;
+            },
+            get: function(){
+                return this._props;
+            },
+        });
         hideTimestamps(!chat_settings.props.showTimestamps);
     }
 }
@@ -149,6 +194,9 @@ function messageHandler(mes){
 
 function addMessageHandler(ele){
     let chatController = getChatController(ele);
+    if(!chatController){
+        return;
+    }
     let api = chatController.props.messageHandlerAPI;
     if(guard(api, 'message_handler')){
         return;

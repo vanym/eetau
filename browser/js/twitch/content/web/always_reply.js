@@ -40,17 +40,15 @@ function processLineNode(node){
         return;
     }
     let mes = getMessage(node);
-    if(mes.tooltipRef != undefined && mes.props.reply != undefined && !isSelfSended(mes)){
-        let buttons_div = mes.tooltipRef;
-        let button2 = buttons_div.querySelector('button');
-        if(button2){
-            let button1 = document.createElement('button');
-            button1.classList = button2.classList;
-            button1.classList.add(CLASS_REPLY_BUTTON);
-            button1.textContent = '⮌';
-            button1.addEventListener('click', relpyClick);
-            buttons_div.insertBefore(button1, button2);
-        }
+    let button2 = node.querySelector('button[data-test-selector="chat-reply-button"]');
+    let buttons_div = button2?.parentElement;
+    if(buttons_div && (mes?.props?.reply !== undefined) && !isSelfSended(mes)){
+        let button1 = document.createElement('button');
+        button1.classList = button2.classList;
+        button1.classList.add(CLASS_REPLY_BUTTON);
+        button1.textContent = '⮌';
+        button1.addEventListener('click', relpyClick);
+        buttons_div.insertBefore(button1, button2);
     }
 }
 

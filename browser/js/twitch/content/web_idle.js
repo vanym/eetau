@@ -2,6 +2,9 @@
 
 async function injectScripts(){
     const CONSTS = await import('./web/consts.mjs');
+    if(CONSTS.DEV_MODE){
+        injectModuleScript(browser.extension.getURL(WEB_DIR + '/dev.js'));
+    }
     let stor_sync = (await new Promise(r => storage.sync.get(CONSTS.DEFAULT_STORAGE.SYNC, r)));
     let show_video_playback = stor_sync.settings.twitch.chat.show_video_playback;
     if(show_video_playback){
@@ -37,23 +40,20 @@ async function injectScripts(){
     if(auto_leave_raids){
         injectModuleScript(browser.extension.getURL(WEB_DIR + '/raids_auto_leave.js'));
     }
-    let chatlog_from_vod = stor_sync.settings.twitch.chat.chatlog_from_vod;
-    if(chatlog_from_vod){
-        const CLASS_CHATLOG_FROM_VOD = CONSTS.EXTENSION_CLASS_PREFIX + '-chatlog-from-vod';
-        const CLASS_CHATLOG_FROM_VOD_SCRIPT = CLASS_CHATLOG_FROM_VOD + '-script';
+    let chatlog_loader = stor_sync.settings.twitch.chat.chatlog_loader;
+    if(chatlog_loader){
+        const CLASS_CHATLOG_LOADER = CONSTS.EXTENSION_CLASS_PREFIX + '-chatlog-loader';
+        const CLASS_CHATLOG_LOADER_SCRIPT = CLASS_CHATLOG_LOADER + '-script';
         let script = document.createElement('script');
         script.setAttribute('type', 'module');
-        script.id = CLASS_CHATLOG_FROM_VOD_SCRIPT;
-        script.setAttribute('settings', JSON.stringify(stor_sync.settings.twitch.chat.chatlog_from_vod_settings));
-        script.setAttribute('src', browser.extension.getURL(WEB_DIR + '/chatlog_from_vod.js'));
+        script.id = CLASS_CHATLOG_LOADER_SCRIPT;
+        script.setAttribute('settings', JSON.stringify(stor_sync.settings.twitch.chat.chatlog_loader_settings));
+        script.setAttribute('src', browser.extension.getURL(WEB_DIR + '/chatlog_loader.js'));
         document.head.appendChild(script);
     }
     let always_reply = stor_sync.settings.twitch.chat.always_reply;
     if(always_reply){
         injectModuleScript(browser.extension.getURL(WEB_DIR + '/always_reply.js'));
-    }
-    if(CONSTS.DEV_MODE){
-        injectModuleScript(browser.extension.getURL(WEB_DIR + '/dev.js'));
     }
 }
 

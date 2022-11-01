@@ -1,5 +1,17 @@
 # Changelog
 
+## 1.2.0 - 2022-11-01
+### Changed
+ - Chat history loader now use chat history endpoint
+
+### Removed
+ - Popout player to be video sized on opening
+
+### Fix
+ - Timestamps to work again
+ - Reply button to appear
+ - Channel link head display
+
 ## 1.1.9 - 2021-06-03
 ### Fix
  - Leave button selector
