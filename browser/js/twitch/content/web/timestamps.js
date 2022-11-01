@@ -123,7 +123,9 @@ function processLineNode(node){
         span_space.classList.add(CLASS_CHAT_LINE_TIMESTAMP_SPAN_INVISIBLE_SPACE);
         span_space.textContent = ' ';
         span.appendChild(span_space);
-        inline_div.insertBefore(span, inline_div.firstChild);
+        let original_timestamp =
+            inline_div.querySelector('.' + TWITCH_CLASS_CHAT_LINE_TIMESTAMP) || inline_div.firstChild;
+        inline_div.insertBefore(span, original_timestamp);
     }
 }
 
