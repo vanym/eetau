@@ -3,7 +3,7 @@
 async function injectScripts(){
     const CONSTS = await import('./web/consts.mjs');
     if(CONSTS.DEV_MODE){
-        injectModuleScript(browser.extension.getURL(WEB_DIR + '/dev.js'));
+        injectDevScript();
     }
     let stor_sync = (await new Promise(r => storage.sync.get(CONSTS.DEFAULT_STORAGE.SYNC, r)));
     let show_video_playback = stor_sync.settings.twitch.chat.show_video_playback;
