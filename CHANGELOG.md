@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+### Fix
+ - Player conflict preventer
+
 ## 1.2.0 - 2022-11-01
 ### Changed
  - Chat history loader now use chat history endpoint
