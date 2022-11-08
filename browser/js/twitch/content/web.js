@@ -8,3 +8,7 @@ function injectModuleScript(url, node=document.head){
     script.setAttribute('src', url);
     node.appendChild(script);
 }
+
+function injectDevScript(){
+    injectModuleScript(browser.runtime.getURL(WEB_DIR + '/dev.mjs'));
+}

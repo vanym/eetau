@@ -1,7 +1,12 @@
 'use strict';
 
+import * as CONSTS from './content/web/consts.mjs';
+import { parseUrl } from './content/web/common.mjs';
+
+const browser = chrome;
+const storage = chrome.storage;
+
 async function getTargetInfo(url){
-    const CONSTS = await import('./content/web/consts.mjs');
     let url_info = parseUrl(url);
     let target_info = {};
     if(url_info.paths[0] == 'videos'){
@@ -51,7 +56,6 @@ function createWindow(create_data, popout_using_windows_api=true){
 }
 
 async function openChat(channel_name){
-    const CONSTS = await import('./content/web/consts.mjs');
     let stor = (await new Promise(r => storage.local.get(CONSTS.DEFAULT_STORAGE.LOCAL, r)));
     let popout_chat = stor.settings.twitch.popout_chat;
     let create_data = {
@@ -68,7 +72,6 @@ async function openChat(channel_name){
 }
 
 async function openPlayer(target_info){
-    const CONSTS = await import('./content/web/consts.mjs');
     let stor = (await new Promise(r => storage.local.get(CONSTS.DEFAULT_STORAGE.LOCAL, r)));
     let url = new URL('https://player.twitch.tv/');
     url.searchParams.append('parent', 'twitch.tv');
@@ -119,7 +122,6 @@ async function openPlayer(target_info){
 }
 
 async function windowResizeViewport(width, height, tab){
-    const CONSTS = await import('./content/web/consts.mjs');
     let win = (await new Promise(r => browser.windows.get(tab.windowId, r)));
     let offset = {
         x: (win.width  - tab.width ),
@@ -171,7 +173,6 @@ async function onClicked(info, tab){
 }
 
 async function createContextMenus(){
-    const CONSTS = await import('./content/web/consts.mjs');
     let root_menu_id = browser.contextMenus.create({
         'id': 'popout-open',
         'title': 'Open Popout',
@@ -207,4 +208,4 @@ async function onInstalled(details){
 
 browser.runtime.onInstalled.addListener(onInstalled);
 browser.contextMenus.onClicked.addListener(onClicked);
-browser.extension.onMessage.addListener(onMessage);
+browser.runtime.onMessage.addListener(onMessage);

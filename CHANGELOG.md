@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.2.1 - 2022-11-08
+### Changed
+ - Update manifest to v3
+
+### Fix
+ - Player conflict preventer
+
 ## 1.2.0 - 2022-11-01
 ### Changed
  - Chat history loader now use chat history endpoint

@@ -150,6 +150,9 @@ function handleKeyboardEvent(e){
     if(!(media_player_root)){return;}
     let media_player = media_player_root && media_player_root.props.mediaPlayerInstance;
     let actions = 0;
+    if(media_player && settings.prevent_conflicts){
+        patchPlayerSetters(media_player.__proto__);
+    }
     if(e.code == settings.keys.fullscreen_toggle){
         let root = getMediaPlayerRoot(media_player);
         if(root){
