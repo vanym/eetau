@@ -163,7 +163,7 @@ async function setup(){
     keybind_buttons.forEach(setup_keybind_button);
     let h1_title = document.getElementById('title');
     if(h1_title){
-        let details = browser.app.getDetails();
+        let details = browser.runtime.getManifest();
         let title = details.name + ' ' + details.version;
         document.title = title;
         h1_title.textContent = title;

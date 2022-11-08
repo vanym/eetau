@@ -10,7 +10,7 @@ function fixSize(){
         let width = parseInt(hashParams.get('width'));
         let height = parseInt(hashParams.get('height'));
         if(width && height){
-            browser.extension.sendMessage({
+            browser.runtime.sendMessage({
                 type: 'window-resize-viewport',
                 width: width,
                 height: height

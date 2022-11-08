@@ -2,6 +2,7 @@
 
 async function titleChange(){
     const CONSTS = await import('./web/consts.mjs');
+    const COMMON = await import('./web/common.mjs');
     let stor = (await new Promise(r => storage.sync.get(CONSTS.DEFAULT_STORAGE.SYNC, r)));
     let change_title_chat = stor.settings.twitch.popout_chat.change_title;
     let new_title_chat = stor.settings.twitch.popout_chat.title;
@@ -9,7 +10,7 @@ async function titleChange(){
     let change_title_player = stor.settings.twitch.popout_player.change_title;
     let new_title_player_channel = stor.settings.twitch.popout_player.title_channel;
     let new_title_player_video = stor.settings.twitch.popout_player.title_video;
-    let url = parseUrl(document.location);
+    let url = COMMON.parseUrl(document.location);
     if(url.paths[0] == 'popout' && url.paths[2] == 'chat'){
         let channel_name = url.paths[1];
         if(change_title_chat){

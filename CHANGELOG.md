@@ -1,6 +1,9 @@
 # Changelog
 
 ## Unreleased
+### Changed
+ - Update manifest to v3
+
 ### Fix
  - Player conflict preventer
 

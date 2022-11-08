@@ -10,5 +10,5 @@ function injectModuleScript(url, node=document.head){
 }
 
 function injectDevScript(){
-    injectModuleScript(browser.extension.getURL(WEB_DIR + '/dev.js'));
+    injectModuleScript(browser.runtime.getURL(WEB_DIR + '/dev.mjs'));
 }
