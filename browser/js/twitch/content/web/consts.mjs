@@ -40,8 +40,6 @@ export const DEFAULT_SETTINGS = {
             quality_up: 'Equal',
             quality_down: 'Minus'
         }
-    },
-    CHATLOG_LOADER_SETTINGS: {
     }
 }
 
@@ -56,9 +54,7 @@ export const DEFAULT_STORAGE = {
                     community_points_settings: {
                         auto_claim_bonus: false
                     },
-                    auto_leave_raids: false,
-                    chatlog_loader: true,
-                    chatlog_loader_settings: DEFAULT_SETTINGS.CHATLOG_LOADER_SETTINGS
+                    auto_leave_raids: false
                 },
                 player: {
                     controls: true,

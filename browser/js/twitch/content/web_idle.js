@@ -40,17 +40,6 @@ async function injectScripts(){
     if(auto_leave_raids){
         injectModuleScript(browser.runtime.getURL(WEB_DIR + '/raids_auto_leave.mjs'));
     }
-    let chatlog_loader = stor_sync.settings.twitch.chat.chatlog_loader;
-    if(chatlog_loader){
-        const CLASS_CHATLOG_LOADER = CONSTS.EXTENSION_CLASS_PREFIX + '-chatlog-loader';
-        const CLASS_CHATLOG_LOADER_SCRIPT = CLASS_CHATLOG_LOADER + '-script';
-        let script = document.createElement('script');
-        script.setAttribute('type', 'module');
-        script.id = CLASS_CHATLOG_LOADER_SCRIPT;
-        script.setAttribute('settings', JSON.stringify(stor_sync.settings.twitch.chat.chatlog_loader_settings));
-        script.setAttribute('src', browser.runtime.getURL(WEB_DIR + '/chatlog_loader.mjs'));
-        document.head.appendChild(script);
-    }
 }
 
 injectScripts();

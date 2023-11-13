@@ -13,8 +13,6 @@ import { getCurrentChat,
          getChatListPresentation,
          getChatBufferController,
          getApolloClient,
-         getGqlQueryMessageBufferChatHistory,
-         getGqlQueryMessageBufferChatHistoryRenderer,
          observeSearchRoomSelector,
          observeGetChatRoomComponent,
          observeSearchChatLog,
@@ -38,8 +36,6 @@ window.getChatSettings                   = getChatSettings;
 window.getChatListPresentation           = getChatListPresentation;
 window.getChatBufferController           = getChatBufferController;
 window.getApolloClient                   = getApolloClient;
-window.getGqlQueryMessageBufferChatHistory = getGqlQueryMessageBufferChatHistory;
-window.getGqlQueryMessageBufferChatHistoryRenderer = getGqlQueryMessageBufferChatHistoryRenderer;
 window.observeSearchRoomSelector         = observeSearchRoomSelector;
 window.observeGetChatRoomComponent       = observeGetChatRoomComponent;
 window.observeSearchChatLog              = observeSearchChatLog;

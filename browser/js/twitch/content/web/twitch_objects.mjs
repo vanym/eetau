@@ -335,35 +335,6 @@ export function getApolloClient(){
     return client;
 }
 
-export function getGqlQueryMessageBufferChatHistory(ele=document){
-    let query;
-    try{
-        const node = searchReactChildren(
-            getReactInstance(matchesQuery(ele, ROOM_SELECTOR)),
-            n => n?.pendingProps?.query?.MessageBufferChatHistory,
-            256
-        );
-        query = node.pendingProps.query.MessageBufferChatHistory;
-    }catch(_){}
-    return query;
-}
-
-export function getGqlQueryMessageBufferChatHistoryRenderer(ele=document){
-    let renderer;
-    try{
-        const node = searchReactChildren(
-            getReactInstance(matchesQuery(ele, ROOM_SELECTOR)),
-            n => n.stateNode && n.stateNode.setWrappedInstance &&
-            n.stateNode.props && n.stateNode.props.channelLogin &&
-            (n.stateNode.props.isLoggedIn !== undefined) &&
-            n.stateNode.props.data,
-            256
-        );
-        renderer = node.stateNode;
-    }catch(_){}
-    return renderer;
-}
-
 export function observeSearchRoomSelector(callback, callbackLost=null, ele=document){
     observeSearch(callback, callbackLost, ROOM_SELECTOR, ele, false, null);
 }

@@ -3,6 +3,7 @@
 ## Unreleased
 ### Removed
  - Option to force add reply button
+ - Chat history loader
 
 ## 1.2.1 - 2022-11-08
 ### Changed
