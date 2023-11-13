@@ -51,10 +51,6 @@ async function injectScripts(){
         script.setAttribute('src', browser.runtime.getURL(WEB_DIR + '/chatlog_loader.mjs'));
         document.head.appendChild(script);
     }
-    let always_reply = stor_sync.settings.twitch.chat.always_reply;
-    if(always_reply){
-        injectModuleScript(browser.runtime.getURL(WEB_DIR + '/always_reply.mjs'));
-    }
 }
 
 injectScripts();

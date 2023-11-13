@@ -58,8 +58,7 @@ export const DEFAULT_STORAGE = {
                     },
                     auto_leave_raids: false,
                     chatlog_loader: true,
-                    chatlog_loader_settings: DEFAULT_SETTINGS.CHATLOG_LOADER_SETTINGS,
-                    always_reply: true
+                    chatlog_loader_settings: DEFAULT_SETTINGS.CHATLOG_LOADER_SETTINGS
                 },
                 player: {
                     controls: true,

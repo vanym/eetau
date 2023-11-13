@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+### Removed
+ - Option to force add reply button
+
 ## 1.2.1 - 2022-11-08
 ### Changed
  - Update manifest to v3
