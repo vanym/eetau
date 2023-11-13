@@ -3,7 +3,6 @@
 import { PAGE_LOAD_TIMEOUT } from './consts.mjs';
 import { getChatController,
          getChatControllerFromRoomSelector,
-         sendChatAdminMessage,
          sendNotifyMessage,
          getPubsub,
          waitGet,

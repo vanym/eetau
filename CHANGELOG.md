@@ -1,6 +1,9 @@
 # Changelog
 
 ## Unreleased
+### Fix
+ - Stream state notifications
+
 ### Removed
  - Option to force add reply button
  - Chat history loader
