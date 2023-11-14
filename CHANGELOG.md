@@ -3,6 +3,7 @@
 ## Unreleased
 ### Fix
  - Stream state notifications
+ - Player controls
 
 ### Removed
  - Option to force add reply button
