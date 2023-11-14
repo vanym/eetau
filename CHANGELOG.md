@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 1.2.2 - 2023-11-14
 ### Fix
  - Stream state notifications
  - Player controls
