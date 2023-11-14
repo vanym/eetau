@@ -231,23 +231,40 @@ export function getChatControllerFromRoomSelector(ele=document){
     return chatContentComponent;
 }
 
+let notifyActionType;
+
+function getNotifyChatActionType(){
+    if(notifyActionType !== undefined){
+        return notifyActionType;
+    }
+    let f = window.webpackChunktwitch_twilight
+                    .filter(Array.isArray)
+                    .filter(e => e.length >= 2)
+                    .map(e => e[1])
+                    .filter(o => typeof o === 'object' && o !== null)
+                    .flatMap(Object.values)
+                    .find(f => {
+                        let declaration = f.toString();
+                        return declaration.includes(']="Message",')
+                            && declaration.includes(']="RoomMods",')
+                            && declaration.includes(']="Notice",');
+                    });
+    notifyActionType = +/Notice=(\d+)/g.exec(f.toString())?.[1] || undefined;
+    return notifyActionType;
+}
+
 export function sendNotifyMessage(body, chatController=getChatController()){
     if(!chatController){
         return;
     }
     const id = Date.now();
     chatController.pushMessage({
-        type: 32,
+        type: getNotifyChatActionType() || 28,
         id,
         msgid: id,
         message: body,
         channel: `#${chatController.props.channelLogin}`
     });
-}
-
-export function sendChatAdminMessage(body, ele=document){
-    const chatController = getChatController(ele);
-    sendNotifyMessage(body, chatController);
 }
 
 export function getCurrentMediaPlayer(ele=document){
@@ -333,35 +350,6 @@ export function getApolloClient(){
         client = node.pendingProps.value.client;
     }catch(_){}
     return client;
-}
-
-export function getGqlQueryMessageBufferChatHistory(ele=document){
-    let query;
-    try{
-        const node = searchReactChildren(
-            getReactInstance(matchesQuery(ele, ROOM_SELECTOR)),
-            n => n?.pendingProps?.query?.MessageBufferChatHistory,
-            256
-        );
-        query = node.pendingProps.query.MessageBufferChatHistory;
-    }catch(_){}
-    return query;
-}
-
-export function getGqlQueryMessageBufferChatHistoryRenderer(ele=document){
-    let renderer;
-    try{
-        const node = searchReactChildren(
-            getReactInstance(matchesQuery(ele, ROOM_SELECTOR)),
-            n => n.stateNode && n.stateNode.setWrappedInstance &&
-            n.stateNode.props && n.stateNode.props.channelLogin &&
-            (n.stateNode.props.isLoggedIn !== undefined) &&
-            n.stateNode.props.data,
-            256
-        );
-        renderer = node.stateNode;
-    }catch(_){}
-    return renderer;
 }
 
 export function observeSearchRoomSelector(callback, callbackLost=null, ele=document){

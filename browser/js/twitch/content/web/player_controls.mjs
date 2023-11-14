@@ -16,10 +16,13 @@ const SELECTORS = {
         settings_menu: '*[data-a-target="player-settings-menu"]',
         settings_icon: 'button[data-a-target="player-settings-button"]',
         settings_menu_advanced: 'button[data-a-target="player-settings-menu-item-advanced"]',
-        settings_menu_advanced_ad_stats: '.tw-toggle[data-a-target="player-settings-submenu-advanced-ad-stats"] > label',
-        settings_menu_advanced_video_stats: '.tw-toggle[data-a-target="player-settings-submenu-advanced-video-stats"] > label',
-        settings_menu_advanced_latency_mode: '.tw-toggle[data-a-target="low-latency-toggle"] > label',
-        settings_menu_quality_button: 'button[data-a-target="player-settings-menu-item-quality"]'
+        settings_menu_advanced_ad_stats: '.tw-toggle[data-a-target="player-settings-submenu-advanced-ad-stats"] > input',
+        settings_menu_advanced_video_stats: '.tw-toggle[data-a-target="player-settings-submenu-advanced-video-stats"] > input',
+        // latency toggle doesn't have a 'data-a-target' attr, so we select the first one
+        settings_menu_advanced_latency_mode: 'div[data-a-target="player-settings-menu"] .tw-toggle:not([data-a-target]) > input',
+        settings_menu_quality_button: 'button[data-a-target="player-settings-menu-item-quality"]',
+        settings_theatre: 'button[aria-label*="(alt+t)"]',
+        settings_fullscreen: 'button[data-a-target="player-fullscreen-button"]'
     }
 };
 
@@ -82,7 +85,7 @@ function toggleAdvancedSettings(ele, type, selectors){
     if(menu != null){si.click();}
     si.click();
     (function(){
-    let sia = ele.querySelector(selectors.settings_menu_advanced);
+    let sia = document.querySelector(selectors.settings_menu_advanced);
     if(!sia){return;}
     sia.click();
     let selector;
@@ -92,42 +95,26 @@ function toggleAdvancedSettings(ele, type, selectors){
         case 'latency_mode': selector = selectors.settings_menu_advanced_latency_mode; break;
     }
     if(!selector){return;}
-    let siab = ele.querySelector(selector);
+    let siab = document.querySelector(selector);
     if(!siab){return;}
     siab.click();
     })();
     si.click();
 }
 
-function changeQualityMediaPlayer(ele, up){
-    let menu = ele.querySelector(SELECTORS.media_player.settings_menu);
-    let si = ele.querySelector(SELECTORS.media_player.settings_icon);
-    if(!si){return;}
-    if(menu != null){si.click();}
-    si.click();
-    (function(){
-    let siq = ele.querySelector(SELECTORS.media_player.settings_menu_quality_button);
-    if(!siq){return;}
-    siq.click();
-    let quas = ele.querySelectorAll('*[data-a-target="player-settings-submenu-quality-option"] > input');
-    let aquas = Array.from(quas);
-    let i = aquas.findIndex(n => n.checked);
-    if(up){
-        --i;
-    }else{
-        ++i;
+function changeQualityMediaPlayer(player, step_offset){
+    let qualities = player.getQualities();
+    let current = -1;
+    if(!player.isAutoQualityMode()){
+        let quality = player.getQuality();
+        current = qualities.findIndex(q=>q.name==quality.name);
     }
-    let nqua = aquas[i];
-    if(!nqua){return;}
-    nqua.click();
-    })();
-    menu = ele.querySelector(SELECTORS.media_player.settings_menu);
-    if(menu != null){si.click();}
-}
-
-function changeQualityTemp(player, up){
-    if(!player._setBackendQuality){return;}
-    let setQuality = player._setBackendQuality.bind(player);
+    let next = Math.max(-1, Math.min(current + step_offset, qualities.length - 1));
+    if(next == -1){
+        player.setAutoQualityMode(true);
+    }else{
+        player.setQuality(qualities[next]);
+    }
 }
 
 function getMediaPlayerRoot(media_player){
@@ -156,7 +143,7 @@ function handleKeyboardEvent(e){
     if(e.code == settings.keys.fullscreen_toggle){
         let root = getMediaPlayerRoot(media_player);
         if(root){
-            let fullscreen_button = root.querySelector('button[data-a-target="player-fullscreen-button"]');
+            let fullscreen_button = root.querySelector(SELECTORS.media_player.settings_fullscreen);
             if(fullscreen_button){
                 fullscreen_button.click();
             }
@@ -185,7 +172,7 @@ function handleKeyboardEvent(e){
     if(e.code == settings.keys.theatre_toggle){
         let root = getMediaPlayerRoot(media_player);
         if(root){
-            let theatre_mode_button = root.querySelector('button[data-a-target="player-theatre-mode-button"]');
+            let theatre_mode_button = root.querySelector(SELECTORS.media_player.settings_theatre);
             if(theatre_mode_button){
                 theatre_mode_button.click();
             }
@@ -238,17 +225,11 @@ function handleKeyboardEvent(e){
         ++actions;
     }
     if(e.code == settings.keys.quality_up){
-        let root = getMediaPlayerRoot(media_player);
-        if(root){
-            changeQualityMediaPlayer(root, true);
-        }
+        changeQualityMediaPlayer(media_player, -1);
         ++actions;
     }
     if(e.code == settings.keys.quality_down){
-        let root = getMediaPlayerRoot(media_player);
-        if(root){
-            changeQualityMediaPlayer(root, false);
-        }
+        changeQualityMediaPlayer(media_player, 1);
         ++actions;
     }
 }
@@ -258,9 +239,9 @@ function isDateNear(date){
     return ((now - date) < 50) ? true : false;
 }
 
-function patchPlayerFunction(player, func_name){
+function patchPlayerFunction(player, func_name, guard_name=func_name){
     if(player[func_name] && !guard(player, func_name + '_patched')){
-        const guard_field = VAR_PREFIX + 'last_date_' + func_name;
+        const guard_field = VAR_PREFIX + 'last_date_' + guard_name;
         let originalFunc = player[func_name];
         player[func_name] = function(...args){
             if(isDateNear(this[guard_field])){
@@ -273,6 +254,8 @@ function patchPlayerFunction(player, func_name){
 }
 
 function patchPlayerSetters(player){
+    patchPlayerFunction(player, "play", "playpause");
+    patchPlayerFunction(player, "pause", "playpause");
     patchPlayerFunction(player, "setMuted");
     patchPlayerFunction(player, "setPlaybackRate");
     patchPlayerFunction(player, "seekTo");

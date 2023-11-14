@@ -5,7 +5,6 @@ import { getCurrentChat,
          getChatController,
          getChatControllerFromRoomSelector,
          sendNotifyMessage,
-         sendChatAdminMessage,
          getCurrentMediaPlayer,
          getPubsub,
          getMessage,
@@ -13,8 +12,6 @@ import { getCurrentChat,
          getChatListPresentation,
          getChatBufferController,
          getApolloClient,
-         getGqlQueryMessageBufferChatHistory,
-         getGqlQueryMessageBufferChatHistoryRenderer,
          observeSearchRoomSelector,
          observeGetChatRoomComponent,
          observeSearchChatLog,
@@ -30,7 +27,6 @@ window.sendChatMessage                   = sendChatMessage;
 window.getChatController                 = getChatController;
 window.getChatControllerFromRoomSelector = getChatControllerFromRoomSelector;
 window.sendNotifyMessage                 = sendNotifyMessage;
-window.sendChatAdminMessage              = sendChatAdminMessage;
 window.getCurrentMediaPlayer             = getCurrentMediaPlayer;
 window.getPubsub                         = getPubsub;
 window.getMessage                        = getMessage;
@@ -38,8 +34,6 @@ window.getChatSettings                   = getChatSettings;
 window.getChatListPresentation           = getChatListPresentation;
 window.getChatBufferController           = getChatBufferController;
 window.getApolloClient                   = getApolloClient;
-window.getGqlQueryMessageBufferChatHistory = getGqlQueryMessageBufferChatHistory;
-window.getGqlQueryMessageBufferChatHistoryRenderer = getGqlQueryMessageBufferChatHistoryRenderer;
 window.observeSearchRoomSelector         = observeSearchRoomSelector;
 window.observeGetChatRoomComponent       = observeGetChatRoomComponent;
 window.observeSearchChatLog              = observeSearchChatLog;

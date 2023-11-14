@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.2.2 - 2023-11-14
+### Fix
+ - Stream state notifications
+ - Player controls
+
+### Removed
+ - Option to force add reply button
+ - Chat history loader
+
 ## 1.2.1 - 2022-11-08
 ### Changed
  - Update manifest to v3
